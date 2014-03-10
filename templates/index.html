@@ -13,35 +13,40 @@
 	</style>
 	<!-- Custom styles for the application 
 	<link rel=stylesheet type=text/css href="/static/css/style.css">-->
-	<link rel=stylesheet type=text/css href="/static/css/cstyle.css">
-	<link rel=stylesheet type=text/css href="/static/css/bootstrap-dialog.css">	
-	<!--JQuery -->
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>	
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+	<link rel=stylesheet type=text/css href="/static/css/cstyle.css">
+	<link rel=stylesheet type=text/css href="/static/css/bootstrap-dialog.css">	
+	<link rel=stylesheet type=text/css href="/static/css/datepicker.css">
+	<!--JQuery -->
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>	
+	
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>	
 	<!-- Google Maps Javascript API -->
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>	
 	<!-- Application specific Javascript code -->	
 	<script type="text/javascript" src="/static/js/bootstrap-dialog.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
 	<script type="text/javascript" src="/static/js/map-handling.js"></script>
+	<script type="text/javascript" src="/static/js/main.js"></script>
 </head>
 
 <body>
 	<div class="container-fluid">	
 		<div class="row" id="header">
-			<div class="col-md-3"></div>
-			<div class="col-md-6"> 
+			<div class="col-md-2"></div>
+			<div class="col-md-8"> 
 				<form class="form-inline" role="form">
-					<input type="text" class="form-control" id="venue-name" placeholder="Venue Name">
+					<input type="text" class="form-control" value="" placeholder="Start date" id="date-start" readonly>
+					<input type="text" class="form-control" value="" placeholder="End date" id="date-end" readonly>
 					<input type="text" class="form-control" id="venue-location" placeholder="City (e.g Amsterdam)">
 					<button type="button" class="btn btn-info" id="search-venue">Search Venue</button>
 				</form>
 			</div>
-			<div class="col-md-3"></div>
+			<div class="col-md-2"></div>
 		</div>
 	</div>
 	<div class="facets">
