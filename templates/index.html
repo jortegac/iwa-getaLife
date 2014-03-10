@@ -4,8 +4,16 @@
 	<!--tab name-->
 	<title>getALife</title>
 	<meta charset="utf-8">	
-	<!-- Custom styles for the application -->
-	<link rel=stylesheet type=text/css href="/static/css/style.css">	
+	<!-- Map style -->
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	  html { height: 100% }
+	  body { height: 100%; margin: 0; padding: 0 }
+	  #map-canvas { height: 100% }
+	</style>
+	<!-- Custom styles for the application 
+	<link rel=stylesheet type=text/css href="/static/css/style.css">-->
+	<link rel=stylesheet type=text/css href="/static/css/cstyle.css">
 	<link rel=stylesheet type=text/css href="/static/css/bootstrap-dialog.css">	
 	<!--JQuery -->
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>	
@@ -19,58 +27,31 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>	
 	<!-- Application specific Javascript code -->	
 	<script type="text/javascript" src="/static/js/bootstrap-dialog.js"></script>
-
-<script>
-	// Global map variable
-	var map;
-	// Global structure to store the markers to be displayed on the map
-	var markers = [];
-	// Window to display the venue information	
-	var infowindow = new google.maps.InfoWindow({});
-
-	// Initialize the location autocomplete form input text and the map elements
-	function initialize() {		
-		// Code for the autocomplete location input text field
-		var input = (document.getElementById('locationTextField'));
-		var autocomplete = new google.maps.places.Autocomplete(input);
-		// Limit the autocompletion to city names
-		autocomplete.setTypes(['(cities)'])
-		google.maps.event.addListener(autocomplete, 'place_changed', function() {});
-		
-		// Initial options for the map
-		var myOptions = {
-			zoom: 13,
-			// Center on Amsterdam
-			center: new google.maps.LatLng(52.3731, 4.8922),
-			mapTypeControl: true,
-			mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
-			navigationControl: true,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		}
-		
-		// Assign the map to the 'map-canvas' element
-		map = new google.maps.Map(document.getElementById('map-canvas'), myOptions);
-	}
-
-	google.maps.event.addDomListener(window, 'load', initialize);
-</script>
+	<script type="text/javascript" src="/static/js/map-handling.js"></script>
 </head>
 
 <body>
-	<div id="header" class="navbar navbar-inverse navbar-fixed-top" role="search">
-		<center>
-		  <div class="container fill">		  
-			<div class="row">				
-				<div class="navbar-header span2">
-					<a class="navbar-brand" href="/">getaLife</a>		  
-				</div>			
+	<div class="container-fluid">	
+		<div class="row" id="header">
+			<div class="col-md-3"></div>
+			<div class="col-md-6"> 
+				<form class="form-inline" role="form">
+					<input type="text" class="form-control" id="venue-name" placeholder="Venue Name">
+					<input type="text" class="form-control" id="venue-location" placeholder="City (e.g Amsterdam)">
+					<button type="button" class="btn btn-info" id="search-venue">Search Venue</button>
+				</form>
 			</div>
-		  </div>
-		</center>		  
-	</div>	 
-	<div id="mycontent" class="container fill">
-		<div id="map-canvas" ></div>	
+			<div class="col-md-3"></div>
+		</div>
 	</div>
-<div>
-</div>
-</body></html>
+	<div class="facets">
+		<div id="genre">
+			<h3>Genre</h3>
+		</div>
+		<div id="venuetype">
+			<h3>Venue Type</h3>
+		</div>
+	</div>
+	<div id="map-canvas"></div>
+</body>
+</html>
