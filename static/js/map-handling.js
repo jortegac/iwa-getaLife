@@ -10,18 +10,6 @@ function initialize() {
 		mapOptions);
 }
 
-function getFacetName(item){
-	var terms = item.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-	return terms[terms.length-1];
-}
-
-function sendSearchRequest() {
-	data = facetSearchData.join("&");
-	alert(data);
-	//$.get('/show', data=data, function(json){	
-	//}
-}
-
 // Removes the markers from the map, but keeps them in the array.
 function clearMarkers() {
 	setAllMap(null);

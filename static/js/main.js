@@ -3,6 +3,9 @@ $( document ).ready(function() {
 	init_map();
 	init_datepicker();
 	init_genrepicker();
+	//init_genrepicker_rdf();
+	
+	
 });
 
 function init_datepicker(){
@@ -42,7 +45,47 @@ function init_genrepicker(){
 	genres.push("ah:GenreMovie");
 	genres.push("ah:GenreDance");
 	genres.push("ah:GenreCabaret");
+	createGenres(genres);
+}
 
+function init_genrepicker_rdf(){
+	var genres = [];
+	var service = '/genres';
+
+	$.getJSON(service).done(function(json) {
+		
+		$.each(json.results.bindings, function(i, binding) {
+			
+			var canonicalName = binding.genre.value;
+			var displayValue = binding.genre_name.value;
+			
+			var tmp = canonicalName.lastIndexOf("/");
+			
+			canonicalName = canonicalName.substring(tmp+1);
+			//console.log(canonicalName);
+			
+			genres.push("ah:" + canonicalName);
+
+		});	
+		createGenres(genres);
+	});
+	
+	
+}
+
+function getFacetName(item){
+	var terms = item.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+	return terms[terms.length-1];
+}
+
+function sendSearchRequest() {
+	data = facetSearchData.join("&");
+	alert(data);
+	//$.get('/show', data=data, function(json){	
+	//}
+}
+
+function createGenres(genres) {
 	$.each(genres, function(index, item) {
 		$( "#genre" ).append( "<input type='checkbox' name='"+item+"' value='"+item+"'> "+getFacetName(item)+"<br/>" );
 	});
