@@ -1,0 +1,272 @@
+{
+  "head" : {
+    "vars" : [ "genreName" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Ballet"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Beurs"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Boottocht"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Buitenexpositie"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Cabaret"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Circus"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Culinair"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Dance"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Debat"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Documentaire"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Festival"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Folklore"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Galerie"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Hedendaagse muziek"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Jazz"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Jeugd"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Kermis"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Klassieke muziek"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Lezing"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Literatuur"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Markt"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Mime"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Moderne dans"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Museum"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Musical"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Muziektheater"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Niet-westerse dans"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Open dag"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Openstelling"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Opera"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Optocht"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Overigen"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Popmuziek"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Poppentheater"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Rondleiding"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Rondrit"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Show"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Speelfilm"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Sport"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Tentoonstelling"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Toneel"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Wandeling"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Wereldmuziek"
+      }
+    }, {
+      "genreName" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+        "type" : "literal",
+        "value" : "Workshop"
+      }
+    } ]
+  }
+}
