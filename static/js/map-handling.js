@@ -1,3 +1,55 @@
+var map;
+var facetSearchData = [];
+
+$( document ).ready(function() {
+	google.maps.event.addDomListener(window, 'load', initialize);
+	
+	var genres = [];
+	genres.push("ah:GenreMovie");
+	genres.push("ah:GenreDance");
+	genres.push("ah:GenreCabaret");
+
+	$.each(genres, function(index, item) {
+		$( "#genre" ).append( "<input type='checkbox' name='"+item+"' value='"+item+"'> "+getFacetName(item)+"<br/>" );
+	});
+	
+	$("#genre input").click(function() {
+		var parent = $(this).parent().attr('id');
+		var searchParameter = parent+"="+this.value;
+		if (this.checked) {
+			facetSearchData.push(searchParameter);
+			sendSearchRequest();
+		} else {
+			var index = $.inArray(searchParameter, facetSearchData);
+			if (index > -1) {
+				facetSearchData.splice(index, 1);
+				sendSearchRequest();
+			}
+		}
+	});
+});
+
+function initialize() {
+	var mapOptions = {
+	  center: new google.maps.LatLng(52.365957,4.894009),
+	  zoom: 13
+	  };
+	map = new google.maps.Map(document.getElementById("map-canvas"),
+		mapOptions);
+}
+
+function getFacetName(item){
+	var terms = item.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+	return terms[terms.length-1];
+}
+
+function sendSearchRequest() {
+	data = facetSearchData.join("&");
+	alert(data);
+	//$.get('/show', data=data, function(json){	
+	//}
+}
+
 // Removes the markers from the map, but keeps them in the array.
 function clearMarkers() {
 	setAllMap(null);
