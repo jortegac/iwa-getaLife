@@ -8,6 +8,26 @@ app = Flask(__name__)
 
 SPARQL_ENDPOINT = 'http://localhost:8080/openrdf-sesame/repositories/IWA-AH'
 
+PREFIX = """PREFIX dc:<http://purl.org/dc/terms/>
+		PREFIX onto:<http://www.ontotext.com/>
+		PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
+		PREFIX foaf:<http://xmlns.com/foaf/0.1/>
+		PREFIX vcard:<http://www.w3.org/2006/vcard/ns#>
+		PREFIX gn:<http://www.geonames.org/ontology#>
+		PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+		PREFIX time:<http://www.w3.org/2006/time#>
+		PREFIX search:<http://rdf.opensahara.com/search#>
+		PREFIX osgeo:<http://rdf.opensahara.com/type/geo/>
+		PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
+		PREFIX owl:<http://www.w3.org/2002/07/owl#>
+		PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+		PREFIX sesame:<http://www.openrdf.org/schema/sesame#>
+		PREFIX gr:<http://purl.org/goodrelations/v1#>
+		PREFIX fn:<http://www.w3.org/2005/xpath-functions#>
+		PREFIX ah:<http://purl.org/artsholland/1.0/>
+		PREFIX bd:<http://www.bigdata.com/rdf/search#>"""
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -45,7 +65,7 @@ def runQuery(query, return_format, endpoint=SPARQL_ENDPOINT):
             
             app.logger.debug('Results were returned, yay!')
             
-            app.logger.debug(response)
+            #app.logger.debug(response)
             
             if return_format == 'RDF':
                 app.logger.debug('Serializing to Turtle format')
@@ -65,7 +85,7 @@ def runQuery(query, return_format, endpoint=SPARQL_ENDPOINT):
 # Get a list of all the genres
 @app.route('/genres', methods=['GET'])
 def getGenres():
-	sparql = "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX ah:<http://purl.org/artsholland/1.0/>SELECT DISTINCT ?genre ?genre_name WHERE { ?genre rdf:type ah:Genre. ?genre rdfs:label ?genre_name} ORDER BY ASC(?genre_name)"
+	sparql = PREFIX + "SELECT DISTINCT ?genre ?genre_name WHERE { ?genre rdf:type ah:Genre. ?genre rdfs:label ?genre_name} ORDER BY ASC(?genre_name)"
 
 	# Run the query
    	return runQuery(sparql, 'JSON') 
@@ -73,16 +93,37 @@ def getGenres():
 # Get a list of all venue types
 @app.route('/venueTypes', methods=['GET'])
 def getVenueTypes():
-	sparql = "PREFIX ah:<http://purl.org/artsholland/1.0/> SELECT DISTINCT ?venue_type ?venue_type_name WHERE {?venue ah:venueType ?venue_type. ?venue_type rdfs:label ?venue_type_name}"
+	sparql = PREFIX + "SELECT DISTINCT ?venue_type ?venue_type_name WHERE {?venue ah:venueType ?venue_type. ?venue_type rdfs:label ?venue_type_name}"
 
 	# Run the query
    	return runQuery(sparql, 'JSON')
 
-# Get a list of all venues by type
-@app.route('/venuesByType', methods=['GET'])
-def getVenuesByType():
-	type = request.args.get('type', None)
-	sparql = "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> PREFIX ah:<http://purl.org/artsholland/1.0/> SELECT ?venue ?venue_type ?venue_type_label WHERE {?venue ah:venueType %s }" % (type,)
+@app.route('/venues', methods=['GET'])
+def getVenues():
+
+	filter = ""
+	
+	if 'type' in request.args:
+		type = request.args.getlist('type', None)
+		filter = filter + " FILTER(?venue_type IN ("
+		for item in type:
+			filter = filter + item + ","
+		filter = filter[:-1]
+		filter = filter + "))"
+		
+	sparql = PREFIX + """SELECT DISTINCT * WHERE {
+					?venue a ah:Venue .
+					?venue ah:venueType ?venue_type .
+					?venue dc:title ?venue_title .
+					OPTIONAL {?venue dc:description ?venue_description .}
+					OPTIONAL {?venue ah:shortDescription ?venue_shortDescription .}
+					OPTIONAL {?venue ah:openingHours ?venue_openingHours .}
+					OPTIONAL {?venue ah:locationAddress ?venue_locationAdress .}			   			   
+					OPTIONAL {?venue geo:lat ?venue_latitude .}
+					OPTIONAL {?venue geo:long ?venue_longitude .}
+					OPTIONAL {?venue vcard:email ?venue_email .}
+					OPTIONAL {?venue foaf:homepage ?venue_homepage .}
+					OPTIONAL {?venue geo:geometry ?venue_geometry .}""" + filter + "}" 
 	# Run the query
    	return runQuery(sparql, 'JSON') 	
     
