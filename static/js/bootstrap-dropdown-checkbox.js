@@ -49,7 +49,7 @@ SOFTWARE.
   // Templates
   // **********************************
   var template = '\
-    <button class="dropdown-checkbox-toggle" data-toggle="dropdown" href="#">Dropdown trigger </button>\
+    <button class="dropdown-checkbox-toggle" data-toggle="dropdown" href="#"> &#9660;</button>\
     <div class="dropdown-checkbox-content">\
       <div class="dropdown-checkbox-header">\
         <input class="checkbox-all" type="checkbox"><input type="text" placeholder="Search" class="search"/>\
@@ -79,7 +79,7 @@ SOFTWARE.
 
     // Set options if exist
     if (typeof options === 'object') {
-      this.$element.text(options.title);
+      this.$element.text(options.title + this.$element.text());
       this.$element.addClass(options.btnClass);
       this.autosearch = options.autosearch;
       this.elements = options.data || [];

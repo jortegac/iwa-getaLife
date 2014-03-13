@@ -59,15 +59,18 @@ function init_genrepicker_rdf(){
 			var canonicalName = binding.genre.value;
 			var displayValue = binding.genre_name.value;			
 			var tmp = canonicalName.lastIndexOf("/");
+			
 			shortName = canonicalName.substring(tmp+1);
-			var item = {id: "ah:" + canonicalName, label:shortName}			
+			displayName = shortName.replace("Genre","");
+			
+			var item = {id: "ah:" + shortName, label:displayName}			
 			genres.push(item)
 		});	
 
 		$(".genreDropDown").dropdownCheckbox({
 		  data: genres,
 		  title: "Select genres",
-		  btnClass: "btn btn-info",
+		  btnClass: "btn btn-primary",
 		  autosearch: true,
 		  hideHeader: false,
 		});
@@ -95,7 +98,7 @@ function init_venue_typepicker_rdf(){
 		$(".typeDropDown").dropdownCheckbox({
 		  data: genres,
 		  title: "Select venue type",
-		  btnClass: "btn btn-info",
+		  btnClass: "btn btn-primary",
 		  autosearch: true,
 		  hideHeader: false,
 		});
