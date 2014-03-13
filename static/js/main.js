@@ -4,6 +4,7 @@ $( document ).ready(function() {
 	init_datepicker();
 	//init_genrepicker();
 	init_genrepicker_rdf();
+	init_venue_typepicker_rdf();
 	
 	
 });
@@ -54,19 +55,13 @@ function init_genrepicker_rdf(){
 
 	$.getJSON(service).done(function(json) {
 		
-		$.each(json.results.bindings, function(i, binding) {
-			
+		$.each(json.results.bindings, function(i, binding) {			
 			var canonicalName = binding.genre.value;
-			var displayValue = binding.genre_name.value;
-			
+			var displayValue = binding.genre_name.value;			
 			var tmp = canonicalName.lastIndexOf("/");
-
 			shortName = canonicalName.substring(tmp+1);
-			var item = {id: "ah:" + canonicalName, label:shortName}
-			//console.log(canonicalName);
-			
+			var item = {id: "ah:" + canonicalName, label:shortName}			
 			genres.push(item)
-
 		});	
 
 		$(".genreDropDown").dropdownCheckbox({
@@ -75,11 +70,36 @@ function init_genrepicker_rdf(){
 		  btnClass: "btn btn-info",
 		  autosearch: true,
 		  hideHeader: false,
-		  //templateButton: '<button class="btn btn-info"><a class="dropdown-checkbox-toggle" data-toggle="dropdown-checkbox" href="#">Genres</b></button>'
 		});
 	});
-	
-	
+}
+
+function init_venue_typepicker_rdf(){
+	var genres = [];
+	var service = '/venueTypes';
+
+	$.getJSON(service).done(function(json) {
+		
+		$.each(json.results.bindings, function(i, binding) {			
+			var canonicalName = binding.venue_type.value;
+					
+			var tmp = canonicalName.lastIndexOf("/");
+			
+			shortName = canonicalName.substring(tmp+1);
+			displayName = shortName.replace("VenueType","");
+			
+			var item = {id: "ah:" + shortName, label:displayName}			
+			genres.push(item)
+		});	
+
+		$(".typeDropDown").dropdownCheckbox({
+		  data: genres,
+		  title: "Select venue type",
+		  btnClass: "btn btn-info",
+		  autosearch: true,
+		  hideHeader: false,
+		});
+	});
 }
 
 function getFacetName(item){
