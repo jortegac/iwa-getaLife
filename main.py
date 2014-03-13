@@ -83,7 +83,7 @@ def runQuery(query, return_format, endpoint=SPARQL_ENDPOINT, jsoni=True):
 # Get a list of all the genres
 @app.route('/genres', methods=['GET'])
 def getGenres():
-	sparql = PREFIX + "SELECT DISTINCT ?genre ?genre_name WHERE { ?genre rdf:type ah:Genre. ?genre rdfs:label ?genre_name} ORDER BY ASC(?genre_name)"
+	sparql = PREFIX + "SELECT DISTINCT ?genre ?genre_name WHERE { ?production ah:genre ?genre. ?genre rdfs:label ?genre_name} ORDER BY ASC(?genre)"
 
 	# Run the query
    	return runQuery(sparql, 'JSON') 
@@ -91,7 +91,7 @@ def getGenres():
 # Get a list of all venue types
 @app.route('/venueTypes', methods=['GET'])
 def getVenueTypes():
-	sparql = PREFIX + "SELECT DISTINCT ?venue_type ?venue_type_name WHERE {?venue ah:venueType ?venue_type. ?venue_type rdfs:label ?venue_type_name}"
+	sparql = PREFIX + "SELECT DISTINCT ?venue_type WHERE {?venue ah:venueType ?venue_type. } ORDER BY ASC(?venue_type )"
 
 	# Run the query
    	return runQuery(sparql, 'JSON')
@@ -129,15 +129,31 @@ def getVenues():
 @app.route('/events', methods=['GET'])
 def getEvents():
 
-	filter = ""
+	type_filter = ""
 	
+	# Get all the 'type' params for venues
 	if 'type' in request.args:
 		type = request.args.getlist('type', None)
-		filter = filter + " FILTER(?venue_type IN ("
+		type_filter = type_filter + " FILTER(?venue_type IN ("
 		for item in type:
-			filter = filter + item + ","
-		filter = filter[:-1]
-		filter = filter + "))"
+			type_filter = type_filter + item + ","
+		type_filter = type_filter[:-1]
+		type_filter = type_filter + ")) ."
+	
+	print type_filter
+	
+	genre_filter = ""
+	
+	# Get all the 'genre' params for venues
+	if 'genre' in request.args:
+		genre = request.args.getlist('genre', None)
+		genre_filter = genre_filter + " FILTER(?event_genre IN ("
+		for item in genre:
+			genre_filter = genre_filter + item + ","
+		genre_filter = genre_filter[:-1]
+		genre_filter = genre_filter + ")) ."
+		
+	print genre_filter
 	
 	#Get all the venues
 	sparql = PREFIX + """SELECT DISTINCT ?venue ?venue_type ?venue_title ?venue_description ?venue_shortDescription ?venue_openingHours ?venue_locationAdress ?venue_latitude ?venue_longitude ?venue_email ?venue_homepage ?venue_geometry WHERE {
@@ -145,6 +161,8 @@ def getEvents():
 					?venue ah:venueType ?venue_type .
 					?venue dc:title ?venue_title .
 					?event ah:venue ?venue.
+					?event ah:production ?event_production .
+					?event_production ah:genre ?event_genre .
 					OPTIONAL {?venue dc:description ?venue_description .}
 					OPTIONAL {?venue ah:shortDescription ?venue_shortDescription .}
 					OPTIONAL {?venue ah:openingHours ?venue_openingHours .}
@@ -153,38 +171,76 @@ def getEvents():
 					OPTIONAL {?venue geo:long ?venue_longitude .}
 					OPTIONAL {?venue vcard:email ?venue_email .}
 					OPTIONAL {?venue foaf:homepage ?venue_homepage .}
-					OPTIONAL {?venue geo:geometry ?venue_geometry .}""" + filter + "}" 
+					OPTIONAL {?venue geo:geometry ?venue_geometry .}""" + type_filter + genre_filter + "}" 
 	# Run the query
 	response = runQuery(sparql, 'JSON', jsoni=False)
 	venues = json.loads(response)
-	toRemove = []
+	
+	# Indices of duplicate venues
+	venuesToRemove = []
+	# Venue homepages of checked venues
+	venuesVisited = []
 	for binding in venues["results"]["bindings"]:
 		venueURI = binding["venue"]["value"]
-		events_data = json.loads(getEventsByVenue(venueURI))
 		
-		events = events_data["results"]["bindings"]
-		records = []
-		for event in events:
-			records.append(event["event"]["value"])
+		# Try to get the venue homepage, to uniquely identify it
+		# Additional venues with the same homepage will be removed
+		try:
+			venueHomePage = binding["venue_homepage"]["value"]		
+			print 'venue homepage: ' + venueHomePage
+			
+			# Check if venue is known
+			if venueHomePage not in venuesVisited:
+				# Add venue to the list of known venues
+				venuesVisited.append(venueHomePage)
+				
+				# Get the events for this venue
+				events_data = json.loads(getEventsByVenue(venueURI, genre_filter))
+				
+				events = events_data["results"]["bindings"]
+				records = []
+				for event in events:
+					records.append(event["event"]["value"])
+				
+				# Add the events data to the response
+				binding["events"] = [dict(event=record) for record in records]	
+			else:
+				# Find the index of the duplicate venue
+				ind = venues["results"]["bindings"].index(binding)
+				# Add it to be removed
+				venuesToRemove.append(ind)
+		# In case the venue does not have a homepage key
+		except:
+			# Get the events for this venue
+			events_data = json.loads(getEventsByVenue(venueURI, genre_filter))				
+			events = events_data["results"]["bindings"]
+			records = []
+			for event in events:
+				records.append(event["event"]["value"])
 
-		binding["events"] = [dict(event=record) for record in records]	
+			# Add the events data to the response
+			binding["events"] = [dict(event=record) for record in records]
+			
+	# Remove all venue duplicates
+	for i in sorted(venuesToRemove, reverse=True):
+		del venues["results"]["bindings"][i]
 			
 	return jsonify(venues)
 	
-def getEventsByVenue(venueURI):
+def getEventsByVenue(venueURI, genre_filter=""):
 	sparql = PREFIX + """SELECT DISTINCT * WHERE {
 			?event a ah:Event .
 			?event dc:title ?event_title .
+			?event ah:production ?event_production .
+			?event_production ah:genre ?event_genre .
 			OPTIONAL {?event ah:venue ?event_venue .}
-			OPTIONAL {?event ah:eventStatus ?event_status .}
-			OPTIONAL {?event ah:production ?event_production .}
+			OPTIONAL {?event ah:eventStatus ?event_status .}			
 			OPTIONAL {?event ah:room ?event_room .}
 			OPTIONAL {?event dc:description ?event_description .}
 			OPTIONAL {?event ah:cidn ?event_cidn .}
 			OPTIONAL {?event time:hasBeginning ?event_beg_time}
 			OPTIONAL {?event time:hasEnd ?event_end_time}
-			FILTER(?event_venue = <%s>)
-			}""" % (venueURI,)
+			FILTER(?event_venue = <%s>)""" % (venueURI,) + genre_filter + "}" 
 			
 	return runQuery(sparql, 'JSON', jsoni=False)	
     
