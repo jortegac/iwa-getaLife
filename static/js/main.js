@@ -20,7 +20,7 @@ function initializeDropdowns(){
 	
 	$("#typeDropDown").dropdownCheckbox({
 			data: [{id:1, label: "Waiting for data..."}],
-			title: "Select genres",
+			title: "Select venue type",
 			btnClass: "btn btn-primary",
 			autosearch: true,
 			hideHeader: false,
@@ -40,8 +40,25 @@ function initializeSearchButton(){
 
 function search(){
 	console.log("Searching...");
-	console.log(($("#genreDropDown").dropdownCheckbox("checked")));
-	console.log(($("#typeDropDown").dropdownCheckbox("checked")));
+	var genres = $("#genreDropDown").dropdownCheckbox("checked");
+	var types = $("#typeDropDown").dropdownCheckbox("checked");
+	
+	var genresQueryString = "";	
+	for (genre in genres){
+		genresQueryString = genresQueryString + "&genre=" + genres[genre].id;
+	}
+	
+	var typesQueryString = "";
+	for (type in types){
+		typesQueryString = typesQueryString + "&type=" + types[type].id;
+	}
+	
+	var endpoint = "/events?" + genresQueryString + typesQueryString;
+	console.log(endpoint);
+	
+	$.getJSON(endpoint).done(function(json) {
+		console.log(json);		
+	});
 }
 
 function initializeDatePicker(){
