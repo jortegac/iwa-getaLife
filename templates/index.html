@@ -39,30 +39,20 @@
 <body>
 	<div class="container-fluid">	
 		<div class="row" id="header">
-			<div class="col-md-2"></div>
-			<div class="col-md-8"> 
+			<div class="col-md-12"> 
 				<form class="form-inline" role="form">
+					<div class="genreDropDown dropMultiSelect"></div>
+					<div class="typeDropDown dropMultiSelect"></div>
 					<input type="text" class="form-control" value="" placeholder="Start date" id="date-start" readonly>
 					<input type="text" class="form-control" value="" placeholder="End date" id="date-end" readonly>
 					<input type="text" class="form-control" id="venue-location" placeholder="City (e.g Amsterdam)">
 					<button type="button" class="btn btn-info" id="search-venue">Search Venue</button>
 				</form>
 			</div>
-			<div class="col-md-2"></div>
 		</div>
 	</div>
 	
-	<div class="facets ">
-		
-		<div id="genre">
-			<h3>Genre</h3>
-			<div class="genreDropDown"></div>
-		</div>
-		<div id="venuetype">
-			<h3>Venue Type</h3>
-			<div class="typeDropDown"></div>
-		</div>
-	</div>
+	
 	<div id="map-canvas" ></div>
 	
 </body>
