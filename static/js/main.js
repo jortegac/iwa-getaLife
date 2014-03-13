@@ -2,8 +2,8 @@ $( document ).ready(function() {
 	
 	init_map();
 	init_datepicker();
-	init_genrepicker();
-	//init_genrepicker_rdf();
+	//init_genrepicker();
+	init_genrepicker_rdf();
 	
 	
 });
@@ -60,14 +60,23 @@ function init_genrepicker_rdf(){
 			var displayValue = binding.genre_name.value;
 			
 			var tmp = canonicalName.lastIndexOf("/");
-			
-			canonicalName = canonicalName.substring(tmp+1);
+
+			shortName = canonicalName.substring(tmp+1);
+			var item = {id: "ah:" + canonicalName, label:shortName}
 			//console.log(canonicalName);
 			
-			genres.push("ah:" + canonicalName);
+			genres.push(item)
 
 		});	
-		createGenres(genres);
+
+		$(".genreDropDown").dropdownCheckbox({
+		  data: genres,
+		  title: "Select genres",
+		  btnClass: "btn btn-info",
+		  autosearch: true,
+		  hideHeader: false,
+		  //templateButton: '<button class="btn btn-info"><a class="dropdown-checkbox-toggle" data-toggle="dropdown-checkbox" href="#">Genres</b></button>'
+		});
 	});
 	
 	
