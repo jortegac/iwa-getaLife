@@ -2,12 +2,33 @@ $( document ).ready(function() {
 	initializeSearchButton();
 	
 	initializeMap();
+	initializeLocationAutocomplete();
 	initializeDatePicker();
 
 	initializeDropdowns();
 	getGenreRDF();
 	getVenueTypeRDF();
 });
+
+function initializeLocationAutocomplete(){
+	// Code for the autocomplete location input text field
+	var input = (document.getElementById('locationTextField'));
+	var autocomplete = new google.maps.places.Autocomplete(input);
+	// Limit the autocompletion to city names
+	autocomplete.setTypes(['(cities)'])
+	google.maps.event.addListener(autocomplete, 'place_changed', function() {});
+	
+	// Initial options for the map
+	var myOptions = {
+		zoom: 13,
+		// Center on Amsterdam
+		center: new google.maps.LatLng(52.3731, 4.8922),
+		mapTypeControl: true,
+		mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+		navigationControl: true,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	}
+}
 
 function initializeDropdowns(){
 	$("#genreDropDown").dropdownCheckbox({
