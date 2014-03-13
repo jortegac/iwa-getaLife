@@ -1,15 +1,50 @@
 $( document ).ready(function() {
+	initializeSearchButton();
 	
-	init_map();
-	init_datepicker();
-	//init_genrepicker();
-	init_genrepicker_rdf();
-	init_venue_typepicker_rdf();
-	
-	
+	initializeMap();
+	initializeDatePicker();
+
+	initializeDropdowns();
+	getGenreRDF();
+	getVenueTypeRDF();
 });
 
-function init_datepicker(){
+function initializeDropdowns(){
+	$("#genreDropDown").dropdownCheckbox({
+			data: [{id:1, label: "Waiting for data..."}],
+			title: "Select genres",
+			btnClass: "btn btn-primary",
+			autosearch: true,
+			hideHeader: false,
+	});
+	
+	$("#typeDropDown").dropdownCheckbox({
+			data: [{id:1, label: "Waiting for data..."}],
+			title: "Select genres",
+			btnClass: "btn btn-primary",
+			autosearch: true,
+			hideHeader: false,
+	});	
+}
+
+function initializeSearchButton(){
+	console.log("initializeSearchButton");
+	// Define behaviour for the submit event in the search form
+	$("#searchForm").submit(function( event ) {
+		// Prevent default behaviour from the search button
+		event.preventDefault();
+		
+		search();
+	});
+}
+
+function search(){
+	console.log("Searching...");
+	console.log(($("#genreDropDown").dropdownCheckbox("checked")));
+	console.log(($("#typeDropDown").dropdownCheckbox("checked")));
+}
+
+function initializeDatePicker(){
 	var nowTemp = new Date();
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 
@@ -36,7 +71,7 @@ function init_datepicker(){
 	}).data('datepicker');
 }
 
-function init_map(){
+function initializeMap(){
 	google.maps.event.addDomListener(window, 'load', initialize);
 }
 
@@ -49,7 +84,7 @@ function init_genrepicker(){
 	createGenres(genres);
 }
 
-function init_genrepicker_rdf(){
+function getGenreRDF(){
 	var genres = [];
 	var service = '/genres';
 
@@ -65,20 +100,15 @@ function init_genrepicker_rdf(){
 			
 			var item = {id: "ah:" + shortName, label:displayName}			
 			genres.push(item)
+			
 		});	
-
-		$(".genreDropDown").dropdownCheckbox({
-		  data: genres,
-		  title: "Select genres",
-		  btnClass: "btn btn-primary",
-		  autosearch: true,
-		  hideHeader: false,
-		});
+		
+		$("#genreDropDown").dropdownCheckbox("reset", genres);
 	});
 }
 
-function init_venue_typepicker_rdf(){
-	var genres = [];
+function getVenueTypeRDF(){
+	var venueTypes = [];
 	var service = '/venueTypes';
 
 	$.getJSON(service).done(function(json) {
@@ -92,16 +122,10 @@ function init_venue_typepicker_rdf(){
 			displayName = shortName.replace("VenueType","");
 			
 			var item = {id: "ah:" + shortName, label:displayName}			
-			genres.push(item)
+			venueTypes.push(item)
 		});	
-
-		$(".typeDropDown").dropdownCheckbox({
-		  data: genres,
-		  title: "Select venue type",
-		  btnClass: "btn btn-primary",
-		  autosearch: true,
-		  hideHeader: false,
-		});
+		
+		$("#typeDropDown").dropdownCheckbox("reset", venueTypes);
 	});
 }
 

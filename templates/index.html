@@ -40,13 +40,13 @@
 	<div class="container-fluid">	
 		<div class="row" id="header">
 			<div class="col-md-12"> 
-				<form class="form-inline" role="form">
-					<div class="genreDropDown dropMultiSelect"></div>
-					<div class="typeDropDown dropMultiSelect"></div>
+				<form id="searchForm" class="navbar-form navbar-left" role="form">
+					<div id="genreDropDown" class="dropMultiSelect"></div>
+					<div id="typeDropDown" class="dropMultiSelect"></div>
 					<input type="text" class="form-control" value="" placeholder="Start date" id="date-start" readonly>
 					<input type="text" class="form-control" value="" placeholder="End date" id="date-end" readonly>
 					<input type="text" class="form-control" id="venue-location" placeholder="City (e.g Amsterdam)">
-					<button type="button" class="btn btn-success" id="search-venue">Search Venue</button>
+					<button id="search-venue" type="submit" class="btn btn-success" >Search Venue</button>
 				</form>
 			</div>
 		</div>
