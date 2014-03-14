@@ -167,3 +167,22 @@ function createMarker(point, html) {
 	// Put marker in the global markers structure
 	markers.push(marker);
 }
+
+function initializeGeolocation(){
+	// Function that allows the user to select their current position as a location for the events. 
+	// Note: it requires the user's permission
+	if(navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(geolocationSuccess,  null,  {timeout:5000});
+	} else {
+		// Browser doesn't support Geolocation
+	}
+}
+
+function geolocationSuccess(position){
+	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	alert(pos);
+	map.setCenter(pos);
+	map.panTo(pos);
+}
+
+

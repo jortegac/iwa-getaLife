@@ -4,6 +4,7 @@ $( document ).ready(function() {
 	initializeMap();
 	initializeLocationAutocomplete();
 	initializeDatePicker();
+	//initializeGeolocation();
 
 	initializeDropdowns();
 	getGenreRDF();
