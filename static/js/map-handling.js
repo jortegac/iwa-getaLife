@@ -1,5 +1,7 @@
 var map;
 var facetSearchData = [];
+var markers = [];
+var infowindow = new google.maps.InfoWindow({});
 
 function initialize() {
 	var mapOptions = {
@@ -63,16 +65,30 @@ function setAllMap(map) {
 }
 
 // Processes the venue data and puts them on the map
-function processVenues(json) {
+function processVenues(venues) {
+	console.log(venues);
+
 	// Process each venue in the response
-	$.each(json.response.venues, function(i, item) {
+	$.each(venues, function(i, item) {
 		
-		// Create a point using the lat and lng of the venue
-		var point = new google.maps.LatLng(item.location.lat,item.location.lng);
-		// Create the information to be displayed for each venue
-		var html = createHtml(item);
-		// Create the marker using the coordinates and the display information
-		createMarker(point, html);
+		
+		console.log(item);
+		
+		if(!jQuery.isEmptyObject(item.venue_longitude) && !jQuery.isEmptyObject(item.venue_latitude) ){
+		
+			var lng = parseFloat(item.venue_longitude.value);
+			var lat = parseFloat(item.venue_latitude.value);
+			
+			console.log(lng);
+			console.log(lat);	
+			
+			// Create a point using the lat and lng of the venue
+			var point = new google.maps.LatLng(lat,lng);
+			// Create the information to be displayed for each venue
+			var html = createHtml(item);
+			// Create the marker using the coordinates and the display information
+			createMarker(point, html);
+		}
 	});	
 	
 	// Put all the markers on the map
@@ -91,21 +107,13 @@ function createHtml(item){
 	var br = $('<br/>');
 	
 	// Venue name
-	div.append(item.name);
-	
-	// Venue category name
-	if(!jQuery.isEmptyObject(item.categories)){
-		div.append(br);
-		var p = $('<p></p>');
-		p.append(item.categories[0].name);
-		div.append(p);
-	}
-	
+	div.append(item.venue_title.value);
+		
 	// Venue URL
-	if(!jQuery.isEmptyObject(item.url)){
+	if(!jQuery.isEmptyObject(item.venue_homepage)){
 		var p = $('<p></p>');
 		var a = $('<a></a>');
-		a.attr("href", item.url);
+		a.attr("href", item.venue_homepage.value);
 		a.attr("target", "_blank");
 		a.append("Visit website");
 		
@@ -114,9 +122,9 @@ function createHtml(item){
 	}
 	
 	// Venue contact phone
-	if(!jQuery.isEmptyObject(item.contact.phone)){
+	if(!jQuery.isEmptyObject(item.venue_openingHours)){
 		var p = $('<p></p>');
-		p.append(item.contact.phone);
+		p.append(item.venue_openingHours.value);
 		div.append(p);
 	}
 	

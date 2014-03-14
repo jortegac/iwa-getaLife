@@ -75,11 +75,16 @@ function search(){
 	}
 	
 	var endpoint = "/events?" + genresQueryString + typesQueryString;
-	console.log(endpoint);
 	
 	$.getJSON(endpoint).done(function(json) {
 		console.log(json);		
+		var venues = json.results.bindings;
+		
+		processVenues(venues);
+		
 	});
+	
+	
 }
 
 function initializeDatePicker(){
