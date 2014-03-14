@@ -27,83 +27,87 @@ PREFIX = """PREFIX dc:<http://purl.org/dc/terms/>
 # Tries to get all the data available from ArtsHolland but for only those things that are relevant for events that are beyond 2014-03-12. 
 # Doesn't really make sense to have data that won't be used.
 def test():
-	query = PREFIX + """CONSTRUCT {
-					?Venue ah:locationAddress ?LocationAdress ;
-					ah:openingHours ?OpeningHours ;
-					ah:shortDescription ?VenueShortDescription ;
-					ah:venueType ?VenueType ;
-					dc:description ?VenueDescription ;
-					dc:title ?VenueTitle ;
-					a ah:Venue ;
-					geo:geometry ?Geometry ;
-					geo:lat ?Latitude ;
-					geo:long ?Longitude ;
-					vcard:email ?Email ;
-					foaf:homepage ?Homepage .
-					?Event ah:eventStatus ?Status ;
-					ah:production ?Production ;
-					ah:room ?Room ;
-					ah:venue ?Venue ;
-					dc:description ?Description ;
-					dc:title ?Title ;
-					a ah:Event ;
-					time:hasBeginning ?BeginningTime ;
-					time:hasEnd ?EndTime ;
-					owl:sameAs ?SameAs .
-					?Production ah:genre ?Genre ;
-					ah:languageNoProblem ?LangProblem ;
-					ah:shortDescription ?ProductionShortDescription ;
-					dc:description ?ProductionDescription ;
-					dc:title ?ProductionTitle ;
-					a ah:Production ;
-					owl:sameAs ?ProductionSameAs .
-					?Genre rdfs:label ?Label .					
-					}
-					WHERE
-					{
-					{
-					?Event ah:venue ?Venue ;
-					ah:production ?Production ;
-					dc:description ?Description ;
-					dc:title ?Title ;
-					a ah:Event ;					
-					ah:venue ?Venue ;
-					dc:description ?Description ;
-					a ah:Event ;
-					time:hasBeginning ?BeginningTime ;
-					time:hasEnd ?EndTime ;
-					owl:sameAs ?SameAs .
-					OPTIONAL {?Event ah:room ?Room } .
-					?Production ah:genre ?Genre ;
-					ah:languageNoProblem ?LangProblem ;
-					ah:shortDescription ?ProductionShortDescription ;
-					dc:description ?ProductionDescription ;
-					dc:title ?ProductionTitle ;
-					a ah:Production ;
-					owl:sameAs ?ProductionSameAs .
-					?Venue dc:title ?VenueTitle .
-					?Venue a ah:Venue .
-					OPTIONAL {?Venue ah:locationAddress ?LocationAdress }.
-					OPTIONAL {?Venue ah:openingHours ?OpeningHours }.
-					OPTIONAL {?Venue ah:shortDescription ?VenueShortDescription }.
-					OPTIONAL {?Venue ah:venueType ?VenueType }.
-					OPTIONAL {?Venue dc:description ?VenueDescription }.
-					OPTIONAL {?Venue owl:sameAs ?VenueSameAs }.
-					OPTIONAL {?Venue geo:lat ?Latitude }.
-					OPTIONAL {?Venue geo:long ?Longitude }.
-					OPTIONAL {?Venue vcard:email ?Email .}
-					OPTIONAL {?Venue foaf:homepage ?Homepage }.
-					OPTIONAL {?Venue geo:geometry ?Geometry }.
-					?Genre rdfs:label ?Label.
-					FILTER (?EndTime > "2014-03-12T00:00:00Z"^^xsd:dateTime)
-					}	
-					}"""
-	
-	sparql = SPARQLWrapper(AH_ENDPOINT)        
-	sparql.setQuery(query)        
-	sparql.setReturnFormat(N3)
-	
-	response = sparql.query().convert()
+	response = ""
+	for i in range(0, 200):
+		print i
+		offset = 50*i
+		query = PREFIX + """CONSTRUCT {
+						?Venue ah:locationAddress ?LocationAdress ;
+						ah:openingHours ?OpeningHours ;
+						ah:shortDescription ?VenueShortDescription ;
+						ah:venueType ?VenueType ;
+						dc:description ?VenueDescription ;
+						dc:title ?VenueTitle ;
+						a ah:Venue ;
+						geo:geometry ?Geometry ;
+						geo:lat ?Latitude ;
+						geo:long ?Longitude ;
+						vcard:email ?Email ;
+						foaf:homepage ?Homepage .
+						?Event ah:eventStatus ?Status ;
+						ah:production ?Production ;
+						ah:room ?Room ;
+						ah:venue ?Venue ;
+						dc:description ?Description ;
+						dc:title ?Title ;
+						a ah:Event ;
+						time:hasBeginning ?BeginningTime ;
+						time:hasEnd ?EndTime ;
+						owl:sameAs ?SameAs .
+						?Production ah:genre ?Genre ;
+						ah:languageNoProblem ?LangProblem ;
+						ah:shortDescription ?ProductionShortDescription ;
+						dc:description ?ProductionDescription ;
+						dc:title ?ProductionTitle ;
+						a ah:Production ;
+						owl:sameAs ?ProductionSameAs .
+						?Genre rdfs:label ?Label .					
+						}
+						WHERE
+						{
+						{
+						?Event ah:venue ?Venue ;
+						ah:production ?Production ;
+						dc:description ?Description ;
+						dc:title ?Title ;
+						a ah:Event ;					
+						ah:venue ?Venue ;
+						dc:description ?Description ;
+						a ah:Event ;
+						time:hasBeginning ?BeginningTime ;
+						time:hasEnd ?EndTime ;
+						owl:sameAs ?SameAs .
+						OPTIONAL {?Event ah:room ?Room } .
+						?Production ah:genre ?Genre ;
+						ah:languageNoProblem ?LangProblem ;
+						ah:shortDescription ?ProductionShortDescription ;
+						dc:description ?ProductionDescription ;
+						dc:title ?ProductionTitle ;
+						a ah:Production ;
+						owl:sameAs ?ProductionSameAs .
+						?Venue dc:title ?VenueTitle .
+						?Venue a ah:Venue .
+						OPTIONAL {?Venue ah:locationAddress ?LocationAdress }.
+						OPTIONAL {?Venue ah:openingHours ?OpeningHours }.
+						OPTIONAL {?Venue ah:shortDescription ?VenueShortDescription }.
+						OPTIONAL {?Venue ah:venueType ?VenueType }.
+						OPTIONAL {?Venue dc:description ?VenueDescription }.
+						OPTIONAL {?Venue owl:sameAs ?VenueSameAs }.
+						OPTIONAL {?Venue geo:lat ?Latitude }.
+						OPTIONAL {?Venue geo:long ?Longitude }.
+						OPTIONAL {?Venue vcard:email ?Email .}
+						OPTIONAL {?Venue foaf:homepage ?Homepage }.
+						OPTIONAL {?Venue geo:geometry ?Geometry }.
+						?Genre rdfs:label ?Label.
+						FILTER (?EndTime > "2014-03-12T00:00:00Z"^^xsd:dateTime)
+						}	
+						} LIMIT 50 OFFSET %d """ % (offset,)
+		
+		sparql = SPARQLWrapper(AH_ENDPOINT)        
+		sparql.setQuery(query)        
+		sparql.setReturnFormat(N3)
+		
+		response = response + sparql.query().convert()
 	
 	text_file = open(OUTPUT, "w")
 	text_file.write(response)
