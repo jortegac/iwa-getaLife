@@ -103,17 +103,26 @@ function processVenues(venues) {
 
 // Create the information to be displayed for this venue
 function createHtml(item){
-	var div = $('<div style="width:240px"></div>');
+	var div = $('<div style="width:240px text-align:justify"></div>');
 	var br = $('<br/>');
 	
 	// Venue name
-	div.append(item.venue_title.value);
+	div.append(item.venue_title.value.trim());
+	
+	// Venue short description	
+	if(!jQuery.isEmptyObject(item.venue_shortDescription)){
+		var p = $('<p><strong>Description</strong></p>');
+		var a = $('<p></p>');
+		a.append(item.venue_shortDescription.value.trim());
+		p.append(a);
+		div.append(p);
+	}
 		
 	// Venue URL
 	if(!jQuery.isEmptyObject(item.venue_homepage)){
 		var p = $('<p></p>');
 		var a = $('<a></a>');
-		a.attr("href", item.venue_homepage.value);
+		a.attr("href", item.venue_homepage.value.trim());
 		a.attr("target", "_blank");
 		a.append("Visit website");
 		
@@ -121,12 +130,16 @@ function createHtml(item){
 		div.append(p);
 	}
 	
-	// Venue contact phone
+	
+	// Venue opening hours	
 	if(!jQuery.isEmptyObject(item.venue_openingHours)){
-		var p = $('<p></p>');
-		p.append(item.venue_openingHours.value);
+		var p = $('<p><strong>Opening hours</strong></p>');
+		var a = $('<p></p>');
+		a.append(item.venue_openingHours.value.trim());
+		p.append(a);
 		div.append(p);
 	}
+
 	
 	return div[0].outerHTML;
 }
