@@ -3,11 +3,46 @@ var facetSearchData = [];
 
 function initialize() {
 	var mapOptions = {
-	  center: new google.maps.LatLng(52.365957,4.894009),
-	  zoom: 13
-	  };
-	map = new google.maps.Map(document.getElementById("map-canvas"),
-		mapOptions);
+		center: new google.maps.LatLng(52.365957,4.894009),
+		zoom: 13,
+		minZoom: 9,
+		maxZoom: 13,
+	};
+	map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	
+	var allowedBounds = new google.maps.LatLngBounds(
+		new google.maps.LatLng(50.75038379999999, 3.357962),
+		new google.maps.LatLng(53.5560213, 7.227510199999999)
+	);
+
+	 var boundLimits = {
+		maxLat : allowedBounds.getNorthEast().lat(),
+		maxLng : allowedBounds.getNorthEast().lng(),
+		minLat : allowedBounds.getSouthWest().lat(),
+		minLng : allowedBounds.getSouthWest().lng()
+	};
+
+	var lastValidCenter = map.getCenter();
+	var newLat, newLng;
+	
+	google.maps.event.addListener(map, 'center_changed', function() {
+		center = map.getCenter();
+		if (allowedBounds.contains(center)) {
+			// still within valid bounds, so save the last valid position
+			lastValidCenter = map.getCenter();
+			return;
+		}
+		newLat = lastValidCenter.lat();
+		newLng = lastValidCenter.lng();
+		if(center.lng() > boundLimits.minLng && center.lng() < boundLimits.maxLng){
+			newLng = center.lng();
+		}
+		if(center.lat() > boundLimits.minLat && center.lat() < boundLimits.maxLat){
+			newLat = center.lat();
+		}
+		map.panTo(new google.maps.LatLng(newLat, newLng));
+	});
+	
 }
 
 // Removes the markers from the map, but keeps them in the array.
