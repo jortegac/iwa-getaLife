@@ -31,8 +31,8 @@ def index():
 # REST Endpoint wrapper for the runQuery function
 @app.route('/sparql', methods=['GET'])
 def sparql():
-    app.logger.debug('You arrived at ' + url_for('sparql'))
-    app.logger.debug('I received the following arguments' + str(request.args) )
+    # app.logger.debug('You arrived at ' + url_for('sparql'))
+    # app.logger.debug('I received the following arguments' + str(request.args) )
 	
     query = request.args.get('query', None)    
     return_format = request.args.get('format','JSON')
@@ -58,15 +58,15 @@ def runQuery(query, return_format, endpoint=SPARQL_ENDPOINT, jsoni=True):
         try :
             response = sparql.query().convert()
             
-            app.logger.debug('Results were returned, yay!')
+            # app.logger.debug('Results were returned, yay!')
             
-            #app.logger.debug(response)
+            # app.logger.debug(response)
             
             if return_format == 'RDF':
-                app.logger.debug('Serializing to Turtle format')
+                # app.logger.debug('Serializing to Turtle format')
                 return response.serialize(format='turtle')
             else :
-                app.logger.debug('Directly returning JSON format')
+                # app.logger.debug('Directly returning JSON format')
                 if jsoni == True:
 					return jsonify(response)
                 else:
@@ -187,7 +187,7 @@ def getEvents():
 		# Additional venues with the same homepage will be removed
 		try:
 			venueHomePage = binding["venue_homepage"]["value"]		
-			print 'venue homepage: ' + venueHomePage
+			# print 'venue homepage: ' + venueHomePage
 			
 			# Check if venue is known
 			if venueHomePage not in venuesVisited:
