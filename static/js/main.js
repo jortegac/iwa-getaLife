@@ -4,11 +4,20 @@ $( document ).ready(function() {
 	initializeMap();
 	initializeLocationAutocomplete();
 	initializeDatePicker();
-	//initializeGeolocation();
+	initializeGeolocation();
 
 	initializeDropdowns();
 	getGenreRDF();
 	getVenueTypeRDF();
+	
+	$("#geolocate").change(function(){
+		if(this.checked) {
+			$('#locationTextField').val("");
+			document.getElementById('locationTextField').disabled = true;
+		} else {
+			document.getElementById('locationTextField').disabled = false;
+		}
+	});
 });
 
 function initializeLocationAutocomplete(){
@@ -204,4 +213,24 @@ function createGenres(genres) {
 			}
 		}
 	});
+}
+
+function initializeGeolocation(){
+	// Function that allows the user to select their current position as a location for the events. 
+	// Note: it requires the user's permission
+	if(navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(geolocationSuccess,  null,  {timeout:5000});
+	} else {
+		// Browser doesn't support Geolocation
+	}
+}
+
+function geolocationSuccess(position){
+	var geoCheck = document.getElementById("geoCheck");
+	geoCheck.style.display = "inline";
+
+	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	
+	//TODO make the new LatLng available to the request
+	
 }
