@@ -16,7 +16,7 @@ function initializeLocationAutocomplete(){
 	var input = (document.getElementById('locationTextField'));
 	var autocomplete = new google.maps.places.Autocomplete(input);
 	// Limit the autocompletion to city names
-	autocomplete.setTypes(['(cities)'])
+	autocomplete.setTypes(['(cities)']);
 	google.maps.event.addListener(autocomplete, 'place_changed', function() {});
 	
 	// Initial options for the map

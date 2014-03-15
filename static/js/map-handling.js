@@ -179,7 +179,12 @@ function initializeGeolocation(){
 }
 
 function geolocationSuccess(position){
+	var geoRadio = document.getElementById("geoRadio");
+	geoRadio.style.display = "block";
+
 	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	
+	
 	alert(pos);
 	map.setCenter(pos);
 	map.panTo(pos);
