@@ -64,6 +64,34 @@ function setAllMap(map) {
 	}
 }
 
+function processEvents(title, events){
+	
+	var div = $('<div class="list-group" text-align:justify"></div>');	
+	
+	$.each(events, function(i, event) {
+		$.each(event, function(i, item) {
+			for(var key in item){
+				
+				
+				var text = "<a href='#' class='list-group-item'>" +
+				"<h4 class='list-group-item-heading'>" + item["title"].trim() + "</h4>" +
+				"<p class='list-group-item-text'>" +
+				"<p><strong>Description</strong></p><p>" + item["description"].trim() + "</p>" +
+				"<p><strong>Beginning</strong></p><p>" + item["beginning"].trim() + "</p>" +
+				"<p><strong>End</strong></p><p>" + item["end"].trim() + "</p>" +
+				"</p>" +
+				"</a>";
+				
+				console.log(text);
+				
+				div.append(text);
+			}
+		});
+	});
+	
+	return {title:title, message:div};
+}
+
 // Processes the venue data and puts them on the map
 function processVenues(venues) {
 	console.log(venues);
@@ -82,12 +110,19 @@ function processVenues(venues) {
 			console.log(lng);
 			console.log(lat);	
 			
+			var events = "";
+			
+			if(!jQuery.isEmptyObject(item.events)){				
+				events = processEvents(item.venue_title.value.trim(), item.events);				
+			}
+			
+			
 			// Create a point using the lat and lng of the venue
 			var point = new google.maps.LatLng(lat,lng);
 			// Create the information to be displayed for each venue
 			var html = createHtml(item);
 			// Create the marker using the coordinates and the display information
-			createMarker(point, html);
+			createMarker(point, html, events);
 		}
 	});	
 	
@@ -152,7 +187,7 @@ function centerMap(marker) {
 }
 
 // Create marker
-function createMarker(point, html) {
+function createMarker(point, html, events) {
 	// Create marker using the coordinates in the point
 	var marker = new google.maps.Marker({
 		position: point
@@ -162,6 +197,13 @@ function createMarker(point, html) {
 	google.maps.event.addListener(marker, "click", function() {
 		infowindow.setContent(html); 
         infowindow.open(map,marker);
+		
+		// Placeholder action
+		// CHANGE ME
+		if(events != "") {
+			BootstrapDialog.show(events);
+		}
+		
 	});
 	
 	// Put marker in the global markers structure
