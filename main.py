@@ -188,40 +188,38 @@ def getEvents():
 		# Try to get the venue homepage, to uniquely identify it
 		# Additional venues with the same homepage will be removed
 		try:
-			venueHomePage = binding["venue_homepage"]["value"]		
-			# print 'venue homepage: ' + venueHomePage
-			
-			# Check if venue is known
-			if venueHomePage not in venuesVisited:
-				# Add venue to the list of known venues
-				venuesVisited.append(venueHomePage)
+			if "venue_homepage" in binding: 
+				venueHomePage = binding["venue_homepage"]["value"]		
+				# print 'venue homepage: ' + venueHomePage
 				
-				# Get the events for this venue
-				events_data = json.loads(getEventsByVenue(venueURI, genre_filter))
-				
-				events = events_data["results"]["bindings"]
-				records = []
-				for event in events:
-					records.append(event["event"]["value"])
-				
-				# Add the events data to the response
-				binding["events"] = [dict(event=record) for record in records]	
+				# Check if venue is known
+				if venueHomePage not in venuesVisited:
+					# Add venue to the list of known venues
+					venuesVisited.append(venueHomePage)
+					
+					# Get the events for this venue										
+					events_data = json.loads(getEventsByVenue(venueURI, genre_filter))
+					records = processEventData(events_data)					
+					# Add the events data to the response
+					binding["events"] = [record for record in records]	
+				else:
+					# Find the index of the duplicate venue
+					ind = venues["results"]["bindings"].index(binding)
+					# Add it to be removed
+					venuesToRemove.append(ind)
+			# In case the venue does not have a homepage key
 			else:
-				# Find the index of the duplicate venue
-				ind = venues["results"]["bindings"].index(binding)
-				# Add it to be removed
-				venuesToRemove.append(ind)
-		# In case the venue does not have a homepage key
-		except:
-			# Get the events for this venue
-			events_data = json.loads(getEventsByVenue(venueURI, genre_filter))				
-			events = events_data["results"]["bindings"]
-			records = []
-			for event in events:
-				records.append(event["event"]["value"])
-
-			# Add the events data to the response
-			binding["events"] = [dict(event=record) for record in records]
+				print "NO HOMEPAGE"	
+				print venueURI
+				# Get the events for this venue										
+				events_data = json.loads(getEventsByVenue(venueURI, genre_filter))
+				records = processEventData(events_data)					
+				# Add the events data to the response
+				binding["events"] = [record for record in records]
+		
+		except Exception as e:
+			app.logger.error('Something went wrong')
+			app.logger.error(e)
 			
 	# Remove all venue duplicates
 	for i in sorted(venuesToRemove, reverse=True):
@@ -229,8 +227,31 @@ def getEvents():
 			
 	return jsonify(venues)
 	
+def processEventData(events_data):
+
+	events = events_data["results"]["bindings"]
+	records = []
+	for event in events:
+		record = []					
+
+		title = event["event_title"]["value"]
+		description = event["event_description"]["value"]
+		beginning = event["event_beg_time"]["value"]
+		end = event["event_end_time"]["value"]
+		genre = event["event_genre"]["value"]
+		
+		record.append({
+			"title":title,
+			"description":description,
+			"beginning":beginning,
+			"end":end,
+			"genre":genre
+			})			
+		records.append(record)
+	return records
+	
 def getEventsByVenue(venueURI, genre_filter=""):
-	sparql = PREFIX + """SELECT DISTINCT * WHERE {
+	sparql = PREFIX + """SELECT DISTINCT ?event_title ?event_genre ?event_status ?event_description ?event_beg_time ?event_end_time WHERE {
 			?event a ah:Event .
 			?event dc:title ?event_title .
 			?event ah:production ?event_production .
