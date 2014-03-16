@@ -4,8 +4,10 @@ from StringIO import StringIO
 import requests
 import json
 import urllib2
+import logging
 
 app = Flask(__name__)
+app.logger.addHandler(logging.FileHandler("app.log"))
 
 #Local endpoint
 SPARQL_ENDPOINT = 'http://localhost:8080/openrdf-sesame/repositories/IWA-AH'
