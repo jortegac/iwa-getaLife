@@ -19,3 +19,30 @@
 	display: none;
 	color: grey;
 }
+
+.panel {
+	position: absolute;
+	top: 65px;
+	left: 0;
+	display: none;
+	background: #025167;
+	border:1px solid #025167;
+	-moz-border-radius-topright: 20px;
+	-webkit-border-top-right-radius: 20px;
+	-moz-border-radius-bottomright: 20px;
+	-webkit-border-bottom-right-radius: 20px;
+	width: 330px;
+	height: auto;
+	padding: 10px;
+	filter: alpha(opacity=85);
+	opacity: .85;
+	z-index: 10;
+}
+
+#closebutton{
+	position: absolute;
+	padding-bottom: 5px;
+	right: 5px;
+	background-image:url('http://www.iconattitude.com/icons/open_icon_library/actions/png/256/window-close.png');
+	
+}

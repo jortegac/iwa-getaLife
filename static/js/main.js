@@ -10,6 +10,10 @@ $( document ).ready(function() {
 	getGenreRDF();
 	getVenueTypeRDF();
 	
+	//please don't touch this stuff
+	//TODO: associate the toggling with markers activity
+	//$(".panel").toggle("fast");
+	
 	$("#geolocate").change(function(){
 		if(this.checked) {
 			$('#locationTextField').val("");
@@ -18,6 +22,10 @@ $( document ).ready(function() {
 			document.getElementById('locationTextField').disabled = false;
 		}
 	});
+	
+	$("#closebutton").click(function(){
+		$(".panel").toggle("fast");
+    });
 });
 
 function initializeLocationAutocomplete(){
@@ -229,8 +237,6 @@ function geolocationSuccess(position){
 	var geoCheck = document.getElementById("geoCheck");
 	geoCheck.style.display = "inline";
 
-	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-	
+	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude); 
 	//TODO make the new LatLng available to the request
-	
 }
