@@ -69,23 +69,18 @@ function processEvents(title, events){
 	var div = $('<div class="list-group" text-align:justify"></div>');	
 	
 	$.each(events, function(i, event) {
-		$.each(event, function(i, item) {
-			for(var key in item){
+		$.each(event, function(i, item) {			
 				
-				
-				var text = "<a href='#' class='list-group-item'>" +
-				"<h4 class='list-group-item-heading'>" + item["title"].trim() + "</h4>" +
-				"<p class='list-group-item-text'>" +
-				"<p><strong>Description</strong></p><p>" + item["description"].trim() + "</p>" +
-				"<p><strong>Beginning</strong></p><p>" + item["beginning"].trim() + "</p>" +
-				"<p><strong>End</strong></p><p>" + item["end"].trim() + "</p>" +
-				"</p>" +
-				"</a>";
-				
-				console.log(text);
-				
-				div.append(text);
-			}
+			var text = "<a href='#' class='list-group-item'>" +
+			"<h4 class='list-group-item-heading'>" + item["title"].trim() + "</h4>" +
+			"<p class='list-group-item-text'>" +
+			"<p><strong>Description</strong></p><p>" + item["description"].trim() + "</p>" +
+			"<p><strong>Beginning</strong></p><p>" + item["beginning"].trim() + "</p>" +
+			"<p><strong>End</strong></p><p>" + item["end"].trim() + "</p>" +
+			"</p>" +
+			"</a>";			
+			div.append(text);
+			
 		});
 	});
 	
