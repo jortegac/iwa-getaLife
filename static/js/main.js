@@ -1,4 +1,8 @@
 $( document ).ready(function() {
+	
+	// Where the spinner animation will be placed 
+	target = document.getElementById('modal');
+
 	initializeSearchButton();
 	
 	initializeMap();
@@ -79,6 +83,9 @@ function initializeSearchButton(){
 
 function search(){
 	console.log("Searching...");
+	
+	startLoadingAnimation();
+	
 	var genres = $("#genreDropDown").dropdownCheckbox("checked");
 	var types = $("#typeDropDown").dropdownCheckbox("checked");
 	
@@ -99,6 +106,7 @@ function search(){
 		var venues = json.results.bindings;
 		
 		processVenues(venues);
+		stopLoadingAnimation();
 		
 	});
 	
