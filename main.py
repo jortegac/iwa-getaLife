@@ -185,7 +185,6 @@ def getEvents():
 					OPTIONAL {?venue vcard:email ?venue_email .}
 					OPTIONAL {?venue foaf:homepage ?venue_homepage .}
 					OPTIONAL {?venue geo:geometry ?venue_geometry .}""" + type_filter + genre_filter + dateFilter + "}" 
-	print sparql
 	
 	# Run the query
 	response = runQuery(sparql, 'JSON', jsoni=False)
@@ -222,8 +221,6 @@ def getEvents():
 					venuesToRemove.append(ind)
 			# In case the venue does not have a homepage key
 			else:
-				print "NO HOMEPAGE"	
-				print venueURI
 				# Get the events for this venue										
 				events_data = json.loads(getEventsByVenue(venueURI, genre_filter, dateFilter))
 				records = processEventData(events_data)					
@@ -241,26 +238,32 @@ def getEvents():
 	return jsonify(venues)
 	
 def processEventData(events_data):
-
-	events = events_data["results"]["bindings"]
+	
 	records = []
-	for event in events:
-		record = []					
-
-		title = event["event_title"]["value"]
-		description = event["event_description"]["value"]
-		beginning = event["event_beg_time"]["value"]
-		end = event["event_end_time"]["value"]
-		genre = event["event_genre"]["value"]
+	
+	try:	
+		events = events_data["results"]["bindings"]
 		
-		record.append({
-			"title":title,
-			"description":description,
-			"beginning":beginning,
-			"end":end,
-			"genre":genre
-			})			
-		records.append(record)
+		for event in events:
+			record = []					
+
+			title = event["event_title"]["value"]
+			description = event["event_description"]["value"]
+			beginning = event["event_beg_time"]["value"]
+			end = event["event_end_time"]["value"]
+			genre = event["event_genre"]["value"]
+			
+			record.append({
+				"title":title,
+				"description":description,
+				"beginning":beginning,
+				"end":end,
+				"genre":genre
+				})			
+			records.append(record)
+	except Exception as e:
+			app.logger.error('Something went wrong')
+			app.logger.error(e)
 	return records
 	
 def getEventsByVenue(venueURI, genre_filter="", dateFilter=""):
