@@ -2,6 +2,11 @@
 var currentGeolocation;
 var currentCity = "";
 var currentCountry = "";
+var locationBoundS = "";
+var locationBoundW = "";
+var locationBoundN = "";
+var locationBoundE = "";
+var autocomplete;
 
 $( document ).ready(function() {
 	
@@ -26,6 +31,7 @@ $( document ).ready(function() {
 	$("#geolocate").change(function(){
 		if(this.checked) {
 			$('#locationTextField').val(currentCity + ", " + currentCountry);
+			google.maps.event.trigger(autocomplete, 'place_changed');
 			document.getElementById('locationTextField').disabled = true;
 		} else {
 			document.getElementById('locationTextField').disabled = false;
@@ -51,8 +57,11 @@ function initializeLocationAutocomplete(){
 		types: ['(cities)'],
 		componentRestrictions: {country: 'nl'}
 	};
-	var autocomplete = new google.maps.places.Autocomplete(input, autocompleOptions);
-	google.maps.event.addListener(autocomplete, 'place_changed', function() {});
+	autocomplete = new google.maps.places.Autocomplete(input, autocompleOptions);
+	google.maps.event.addListener(autocomplete, 'place_changed', function() {
+		
+		reverseGeocodeLocation($("#locationTextField").val());
+	});
 	
 	// Initial options for the map
 	var myOptions = {
@@ -98,8 +107,8 @@ function initializeSearchButton(){
 function search(){
 	console.log("Searching...");
 	
-	var start = $("#date-start").val();
-	var end = $("#date-end").val();
+	
+	
 	console.log(start);
 	console.log(end);
 	
@@ -118,16 +127,26 @@ function search(){
 		typesQueryString = typesQueryString + "&type=" + types[type].id;
 	}
 	
+	var start = $("#date-start").val();
 	var datesQueryString = "";
 	if ( start != "") {
 		datesQueryString = datesQueryString + "&start=" + start;
 	}
 	
+	var end = $("#date-end").val();
 	if (end != ""){
 		datesQueryString = datesQueryString + "&end=" + end;
 	}
 	
-	var endpoint = "/events?" + genresQueryString + typesQueryString + datesQueryString;
+	var location = $("#locationTextField").val();
+	var locationQueryString = "";
+	
+	if (locationBoundS != "" && locationBoundW != "" && locationBoundN != "" && locationBoundE != ""){
+		locationQueryString = "&s=" + locationBoundS + "&w=" + locationBoundW + "&n=" + locationBoundN + "&e=" + locationBoundE;
+	}
+	
+	
+	var endpoint = "/events?" + genresQueryString + typesQueryString + datesQueryString + locationQueryString;
 	
 	console.log(endpoint);
 	
@@ -141,6 +160,32 @@ function search(){
 			BootstrapDialog.alert({title:"Information", message:"No results found. Try a different combination"});
 		}
 		
+		stopLoadingAnimation();
+	});
+}
+
+function reverseGeocodeLocation(location) {
+	console.log("reverseGeocodeLocation"); 
+	startLoadingAnimation();
+	$("search-venue").attr('disabled','disabled');
+	geocoder.geocode({'address': location}, function(results, status) {			
+		if (status == google.maps.GeocoderStatus.OK) {
+			console.log(results);
+			if(results[0].geometry.bounds){
+			
+			var bounds = results[0].geometry.bounds;
+				//south
+				locationBoundS = bounds.Aa.j;
+				//west 
+				locationBoundW = bounds.Aa.k; 			
+				//north
+				locationBoundN = bounds.qa.j; 
+				//east
+				locationBoundE = bounds.qa.k; 	
+			}			
+		}
+		
+		$("search-venue").removeAttr('disabled');
 		stopLoadingAnimation();
 	});
 }
@@ -296,7 +341,7 @@ function geolocationSuccess(position){
 				if (arrAddress[ac].types[0] == "country") { 
 					currentCountry = arrAddress[ac].long_name ;
 				}
-            }			
+            }
 		}
 	});
 	
