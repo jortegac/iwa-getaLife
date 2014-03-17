@@ -4,6 +4,8 @@ var markers = [];
 var infowindow = new google.maps.InfoWindow({});
 var visible = false;
 
+var geocoder = new google.maps.Geocoder();
+
 function initialize() {
 	var mapOptions = {
 		center: new google.maps.LatLng(52.365957,4.894009),
@@ -155,21 +157,21 @@ function processVenues(venues) {
 			// Create a point using the lat and lng of the venue
 			var point = new google.maps.LatLng(lat,lng);
 			// Create the information to be displayed for each venue
-			var html = createHtml(item);
+			var html = createHtml(item, point);
 			// Create the marker using the coordinates and the display information
 			createMarker(point, html, events);
 		}
 	});	
 	
 	// Put all the markers on the map
-	setAllMap(map)
+	setAllMap(map);
 	
 	// Center the map on the first marker in the response
 	centerMap(markers[0]);
 }
 
 // Create the information to be displayed for this venue
-function createHtml(item){
+function createHtml(item, point){
 	var div = $('<div style="width:240px text-align:justify"></div>');
 	var br = $('<br/>');
 	
@@ -206,8 +208,8 @@ function createHtml(item){
 		p.append(a);
 		div.append(p);
 	}
-
-	return div[0].outerHTML;
+	
+	return div;
 }
 
 // Zoom in and center the map on the marker
@@ -224,10 +226,30 @@ function createMarker(point, html, events) {
 		position: point
 	});
 	
+	
 	// Add display information to the marker's info window
 	google.maps.event.addListener(marker, "click", function() {
-		infowindow.setContent(html); 
-        infowindow.open(map,marker);
+		
+		geocoder.geocode({'latLng': point}, function(results, status) {
+			var address = "No available address";
+			if (status == google.maps.GeocoderStatus.OK) {
+				console.log(results);
+				if (results[0]) {
+				address = results[0].formatted_address;
+				}
+				
+				var p = $('<p><strong>Address:</strong></p>');
+				var a = $('<p></p>');
+				a.append(address);
+				p.append(a);
+				html.append(p);
+				console.log(address);
+			}
+			infowindow.setContent(html[0].outerHTML); 
+			infowindow.open(map,marker);
+		});
+	
+		
 		
 		// Placeholder action
 		// CHANGE ME
