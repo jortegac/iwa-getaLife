@@ -126,9 +126,6 @@ function processVenues(venues) {
 	
 	// Center the map on the first marker in the response
 	centerMap(markers[0]);
-	
-	// Trigger the click event on the first marker to bring up the display information for that venue
-	google.maps.event.trigger(markers[0], 'click'); 
 }
 
 // Create the information to be displayed for this venue
