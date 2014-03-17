@@ -246,10 +246,9 @@ function createMarker(point, html, events) {
 				var a = $('<p></p>');
 				a.append(address);
 				p.append(a);
-				html.append(p);
 				console.log(address);
 			}
-			infowindow.setContent(html[0].outerHTML); 
+			infowindow.setContent(html[0].outerHTML + p[0].outerHTML); 
 			infowindow.open(map,marker);
 		});
 	
