@@ -106,7 +106,12 @@ function search(){
 		console.log(json);		
 		var venues = json.results.bindings;
 		
-		processVenues(venues);
+		if (venues.length != 0){
+			processVenues(venues);
+		} else {
+			BootstrapDialog.alert({title:"Information", message:"No results found. Try a different combination"});
+		}
+		
 		stopLoadingAnimation();
 		
 	});

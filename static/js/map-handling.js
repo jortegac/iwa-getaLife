@@ -9,7 +9,7 @@ function initialize() {
 		center: new google.maps.LatLng(52.365957,4.894009),
 		zoom: 13,
 		minZoom: 9,
-		maxZoom: 13,
+		
 	};
 	map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 	
@@ -146,9 +146,6 @@ function processVenues(venues) {
 	
 	// Center the map on the first marker in the response
 	centerMap(markers[0]);
-	
-	// Trigger the click event on the first marker to bring up the display information for that venue
-	google.maps.event.trigger(markers[0], 'click'); 
 }
 
 // Create the information to be displayed for this venue
