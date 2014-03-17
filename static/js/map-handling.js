@@ -70,6 +70,7 @@ function processEvents(title, events){
 	//var div = $('<div class="list-group" text-align:justify"></div>');	
 	var div = document.createElement('div');
 	$( div ).attr("class", "list-group");
+	var parser = new DOMParser()
 	
 	$.each(events, function(i, event) {
 		$.each(event, function(i, item) {
@@ -82,14 +83,27 @@ function processEvents(title, events){
 			var list = document.createElement('p');
 			$(list).attr("class", "list-group-item-text");
 			
-			var description = document.createElement('p');
+			var descTitle = document.createElement('p');
 			text = document.createTextNode("Description");
-			description.appendChild(text);
+			descTitle.appendChild(text);
+			list.appendChild(descTitle);
+			var description = document.createElement('p');
+			description.innerHTML = item["description"].trim();
 			list.appendChild(description);
 			
+			var beginning = document.createElement('p');
+			text = document.createTextNode("Beginning: "+item["beginning"].trim());
+			beginning.appendChild(text);
+			list.appendChild(beginning);
 			
-			div.appendChild(list);
-			alert(div.outerHTML);
+			var end = document.createElement('p');
+			text = document.createTextNode("End: "+item["end"].trim());
+			end.appendChild(text);
+			list.appendChild(end);
+			
+			
+			
+			
 				
 			var text = "<a href='#' class='list-group-item'>" +
 			"<h4 class='list-group-item-heading'>" + item["title"].trim() + "</h4>" +
@@ -101,10 +115,16 @@ function processEvents(title, events){
 			"</a>";	
 			
 			//div.appendChild(text);
+			div.appendChild(heading);
+			div.appendChild(list);
+			
 			
 		});
+		
 	});
-	return {title:title, message:div};
+	//alert(div.outerHTML);
+	return div;
+	//return {title:title, message:div};
 }
 
 // Processes the venue data and puts them on the map
@@ -214,14 +234,15 @@ function createMarker(point, html, events) {
 		if(events != "") {
 			//BootstrapDialog.show(events);
 			if(visible){
-				
+				var myNode = document.getElementById("panelText");
+				while (myNode.firstChild) {
+					myNode.removeChild(myNode.firstChild);
+				}
 			} else {
-				alert(events["message"]);
 				visible = $(".panel").toggle("fast").is(":visible");
-				var panel = document.getElementById('panel');
-				var content = $.parseHTML( events );
-				$('#panelText').innerHTML = content;
 			}
+			var content = $.parseHTML(events.outerHTML);
+			$('#panelText').append(content);
 		}
 		
 	});

@@ -30,6 +30,10 @@ $( document ).ready(function() {
 	$("#closebutton").click(function(){
 		$(".panel").toggle("fast");
 		visible = false;
+		var myNode = document.getElementById("panelText");
+		while (myNode.firstChild) {
+			myNode.removeChild(myNode.firstChild);
+		}
     });
 });
 
