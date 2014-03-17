@@ -1,3 +1,8 @@
+
+var currentGeolocation;
+var currentCity = "";
+var currentCountry = "";
+
 $( document ).ready(function() {
 	
 	// Where the spinner animation will be placed 
@@ -20,7 +25,7 @@ $( document ).ready(function() {
 	
 	$("#geolocate").change(function(){
 		if(this.checked) {
-			$('#locationTextField').val("");
+			$('#locationTextField').val(currentCity + ", " + currentCountry);
 			document.getElementById('locationTextField').disabled = true;
 		} else {
 			document.getElementById('locationTextField').disabled = false;
@@ -274,6 +279,28 @@ function geolocationSuccess(position){
 	var geoCheck = document.getElementById("geoCheck");
 	geoCheck.style.display = "inline";
 
-	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude); 
+	currentGeolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude); 
+	
+	geocoder.geocode({'latLng': currentGeolocation}, function(results, status) {			
+		if (status == google.maps.GeocoderStatus.OK) {
+			console.log(results);
+			
+			var arrAddress = results[0].address_components;
+			var locality = "";
+			var country = "";
+            for (ac = 0; ac < arrAddress.length; ac++) {
+                
+                if (arrAddress[ac].types[0] == "locality") { 
+					currentCity = arrAddress[ac].long_name ;
+				}
+				if (arrAddress[ac].types[0] == "country") { 
+					currentCountry = arrAddress[ac].long_name ;
+				}
+            }			
+		}
+	});
+	
+	
+	
 	//TODO make the new LatLng available to the request
 }
