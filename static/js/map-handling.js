@@ -90,12 +90,12 @@ function processEvents(title, events){
 			list.appendChild(description);
 			
 			var beginning = document.createElement('p');
-			text = document.createTextNode("Beginning: "+item["beginning"].trim());
+			text = document.createTextNode("Beginning: "+ new Date(item["beginning"].trim()).toString());
 			beginning.appendChild(text);
 			list.appendChild(beginning);
 			
 			var end = document.createElement('p');
-			text = document.createTextNode("End: "+item["end"].trim());
+			text = document.createTextNode("End: "+ new Date(item["end"].trim()).toString());
 			end.appendChild(text);
 			list.appendChild(end);
 			
