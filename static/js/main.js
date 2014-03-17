@@ -40,9 +40,13 @@ $( document ).ready(function() {
 function initializeLocationAutocomplete(){
 	// Code for the autocomplete location input text field
 	var input = (document.getElementById('locationTextField'));
-	var autocomplete = new google.maps.places.Autocomplete(input);
-	// Limit the autocompletion to city names
-	autocomplete.setTypes(['(cities)']);
+	
+	// Limit the autocompletion to city names of the netherlands
+	var autocompleOptions = {
+		types: ['(cities)'],
+		componentRestrictions: {country: 'nl'}
+	};
+	var autocomplete = new google.maps.places.Autocomplete(input, autocompleOptions);
 	google.maps.event.addListener(autocomplete, 'place_changed', function() {});
 	
 	// Initial options for the map
