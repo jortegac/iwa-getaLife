@@ -164,7 +164,7 @@ def getEvents():
 		start = request.args.get('start')
 		end = request.args.get('end')
 		
-		dateFilter = dateFilter + "FILTER (?StartTime <= \"%sT00:00:00Z\"^^xsd:dateTime) . \n FILTER(?EndTime >= \"%sT00:00:00Z\"^^xsd:dateTime)." % (end, start)
+		dateFilter = dateFilter + "FILTER (?event_beg_time <= \"%sT00:00:00Z\"^^xsd:dateTime) . \n FILTER(?event_end_time >= \"%sT00:00:00Z\"^^xsd:dateTime)." % (end, start)
 	
 	#Get all the venues
 	sparql = PREFIX + """SELECT DISTINCT ?venue ?venue_type ?venue_title ?venue_description ?venue_shortDescription ?venue_openingHours ?venue_locationAdress ?venue_latitude ?venue_longitude ?venue_email ?venue_homepage ?venue_geometry WHERE {
@@ -174,8 +174,8 @@ def getEvents():
 					?event ah:venue ?venue.
 					?event ah:production ?event_production .
 					?event_production ah:genre ?event_genre .
-					?event time:hasBeginning ?StartTime .
-					?event time:hasEnd ?EndTime .
+					?event time:hasBeginning ?event_beg_time .
+					?event time:hasEnd ?event_end_time .
 					OPTIONAL {?venue dc:description ?venue_description .}
 					OPTIONAL {?venue ah:shortDescription ?venue_shortDescription .}
 					OPTIONAL {?venue ah:openingHours ?venue_openingHours .}
@@ -211,7 +211,7 @@ def getEvents():
 					venuesVisited.append(venueHomePage)
 					
 					# Get the events for this venue										
-					events_data = json.loads(getEventsByVenue(venueURI, genre_filter))
+					events_data = json.loads(getEventsByVenue(venueURI, genre_filter, dateFilter))
 					records = processEventData(events_data)					
 					# Add the events data to the response
 					binding["events"] = [record for record in records]	
@@ -225,7 +225,7 @@ def getEvents():
 				print "NO HOMEPAGE"	
 				print venueURI
 				# Get the events for this venue										
-				events_data = json.loads(getEventsByVenue(venueURI, genre_filter))
+				events_data = json.loads(getEventsByVenue(venueURI, genre_filter, dateFilter))
 				records = processEventData(events_data)					
 				# Add the events data to the response
 				binding["events"] = [record for record in records]
@@ -263,7 +263,7 @@ def processEventData(events_data):
 		records.append(record)
 	return records
 	
-def getEventsByVenue(venueURI, genre_filter=""):
+def getEventsByVenue(venueURI, genre_filter="", dateFilter=""):
 	sparql = PREFIX + """SELECT DISTINCT ?event_title ?event_genre ?event_status ?event_description ?event_beg_time ?event_end_time WHERE {
 			?event a ah:Event .
 			?event dc:title ?event_title .
@@ -276,7 +276,7 @@ def getEventsByVenue(venueURI, genre_filter=""):
 			OPTIONAL {?event ah:cidn ?event_cidn .}
 			OPTIONAL {?event time:hasBeginning ?event_beg_time}
 			OPTIONAL {?event time:hasEnd ?event_end_time}
-			FILTER(?event_venue = <%s>)""" % (venueURI,) + genre_filter + "}" 
+			FILTER(?event_venue = <%s>)""" % (venueURI,) + genre_filter + dateFilter + "}" 
 			
 	return runQuery(sparql, 'JSON', jsoni=False)	
     
