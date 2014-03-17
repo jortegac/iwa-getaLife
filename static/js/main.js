@@ -89,6 +89,11 @@ function initializeSearchButton(){
 function search(){
 	console.log("Searching...");
 	
+	var start = $("#date-start").val();
+	var end = $("#date-end").val();
+	console.log(start);
+	console.log(end);
+	
 	startLoadingAnimation();
 	
 	var genres = $("#genreDropDown").dropdownCheckbox("checked");
@@ -104,7 +109,18 @@ function search(){
 		typesQueryString = typesQueryString + "&type=" + types[type].id;
 	}
 	
-	var endpoint = "/events?" + genresQueryString + typesQueryString;
+	var datesQueryString = "";
+	if ( start != "") {
+		datesQueryString = datesQueryString + "&start=" + start;
+	}
+	
+	if (end != ""){
+		datesQueryString = datesQueryString + "&end=" + end;
+	}
+	
+	var endpoint = "/events?" + genresQueryString + typesQueryString + datesQueryString;
+	
+	console.log(endpoint);
 	
 	$.getJSON(endpoint).done(function(json) {
 		console.log(json);		
@@ -117,10 +133,7 @@ function search(){
 		}
 		
 		stopLoadingAnimation();
-		
 	});
-	
-	
 }
 
 function initializeDatePicker(){
@@ -128,6 +141,7 @@ function initializeDatePicker(){
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 
 	var startDate = $('#date-start').datepicker({
+		format:"yyyy-mm-dd",
 		onRender: function(date) {
 			return date.valueOf() < now.valueOf() ? 'disabled' : '';
 		}
@@ -142,6 +156,7 @@ function initializeDatePicker(){
 	}).data('datepicker');
 	
 	var endDate = $('#date-end').datepicker({
+		format:"yyyy-mm-dd",
 		onRender: function(date) {
 			return date.valueOf() <= startDate.date.valueOf() ? 'disabled' : '';
 		}
