@@ -23,7 +23,7 @@
 
 .panel {
 	position: absolute;
-	top: 65px;
+	top: 64px;
 	left: 0;
 	display: none;
 	background: #025167;
@@ -33,12 +33,13 @@
 	-moz-border-radius-bottomright: 20px;
 	-webkit-border-bottom-right-radius: 20px;
 	width: 330px;
-	height: 100%;
+	height: 90%;
 	padding: 10px;
 	filter: alpha(opacity=85);
 	opacity: .85;
 	z-index: 10;
 	color: #FFFFFF;
+	margin-bottom:-64px;
 }
 
 #panelText{
@@ -84,3 +85,6 @@
 	overflow-y: auto;
 }
 
+#map-canvas{
+	margin-bottom:-64px;
+}
