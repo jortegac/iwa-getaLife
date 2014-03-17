@@ -85,10 +85,6 @@ function processEvents(title, events){
 			var list = document.createElement('p');
 			$(list).attr("class", "list-group-item-text");
 			
-			var descTitle = document.createElement('p');
-			text = document.createTextNode("Description");
-			descTitle.appendChild(text);
-			list.appendChild(descTitle);
 			var description = document.createElement('p');
 			description.innerHTML = item["description"].trim();
 			list.appendChild(description);
@@ -103,30 +99,12 @@ function processEvents(title, events){
 			end.appendChild(text);
 			list.appendChild(end);
 			
-			
-			
-			
-				
-			var text = "<a href='#' class='list-group-item'>" +
-			"<h4 class='list-group-item-heading'>" + item["title"].trim() + "</h4>" +
-			"<p class='list-group-item-text'>" +
-			"<p><strong>Description</strong></p><p>" + item["description"].trim() + "</p>" +
-			"<p><strong>Beginning</strong></p><p>" + item["beginning"].trim() + "</p>" +
-			"<p><strong>End</strong></p><p>" + item["end"].trim() + "</p>" +
-			"</p>" +
-			"</a>";	
-			
-			//div.appendChild(text);
 			div.appendChild(heading);
 			div.appendChild(list);
-			
-			
 		});
 		
 	});
-	//alert(div.outerHTML);
 	return div;
-	//return {title:title, message:div};
 }
 
 // Processes the venue data and puts them on the map
