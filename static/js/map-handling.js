@@ -66,7 +66,7 @@ function setAllMap(map) {
 		markers[i].setMap(map);
 	}
 }
-
+// Process the events information of a venue
 function processEvents(title, events){
 	
 	//var div = $('<div class="list-group" text-align:justify"></div>');	

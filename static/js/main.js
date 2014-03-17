@@ -104,29 +104,30 @@ function initializeSearchButton(){
 	});
 }
 
+// Perform search
 function search(){
 	console.log("Searching...");
 	
-	
-	
-	console.log(start);
-	console.log(end);
-	
 	startLoadingAnimation();
 	
+	// Get selected genres
 	var genres = $("#genreDropDown").dropdownCheckbox("checked");
+	// Get selected venue types
 	var types = $("#typeDropDown").dropdownCheckbox("checked");
 	
+	// Build genres query string
 	var genresQueryString = "";	
 	for (genre in genres){
 		genresQueryString = genresQueryString + "&genre=" + genres[genre].id;
 	}
 	
+	// Build venue types query string
 	var typesQueryString = "";
 	for (type in types){
 		typesQueryString = typesQueryString + "&type=" + types[type].id;
 	}
-	
+	 
+	// Build date range query string
 	var start = $("#date-start").val();
 	var datesQueryString = "";
 	if ( start != "") {
@@ -138,6 +139,7 @@ function search(){
 		datesQueryString = datesQueryString + "&end=" + end;
 	}
 	
+	// Build location query string
 	var location = $("#locationTextField").val();
 	var locationQueryString = "";
 	
@@ -145,7 +147,7 @@ function search(){
 		locationQueryString = "&s=" + locationBoundS + "&w=" + locationBoundW + "&n=" + locationBoundN + "&e=" + locationBoundE;
 	}
 	
-	
+	// Build full query string
 	var endpoint = "/events?" + genresQueryString + typesQueryString + datesQueryString + locationQueryString;
 	
 	console.log(endpoint);
@@ -157,16 +159,19 @@ function search(){
 		if (venues.length != 0){
 			processVenues(venues);
 		} else {
+			// No info to display
 			BootstrapDialog.alert({title:"Information", message:"No results found. Try a different combination"});
 		}
 		
 		stopLoadingAnimation();
 	});
 }
-
+// This function takes a location and finds the bounding box that emcompases the location
 function reverseGeocodeLocation(location) {
 	console.log("reverseGeocodeLocation"); 
+	// Start loading animation while data loads
 	startLoadingAnimation();
+	// Disable search button while geocoding happens
 	$("search-venue").attr('disabled','disabled');
 	geocoder.geocode({'address': location}, function(results, status) {			
 		if (status == google.maps.GeocoderStatus.OK) {
@@ -174,22 +179,24 @@ function reverseGeocodeLocation(location) {
 			if(results[0].geometry.bounds){
 			
 			var bounds = results[0].geometry.bounds;
-				//south
-				locationBoundN = bounds.Aa.j;
-				//west 
-				locationBoundS = bounds.Aa.k; 			
 				//north
+				locationBoundN = bounds.Aa.j;
+				//south 
+				locationBoundS = bounds.Aa.k; 			
+				//west
 				locationBoundW = bounds.qa.j; 
 				//east
 				locationBoundE = bounds.qa.k; 	
 			}			
 		}
-		
+		// Reactivate search button
 		$("search-venue").removeAttr('disabled');
+		// Stop animation
 		stopLoadingAnimation();
 	});
 }
 
+// Initialize the date picking UI elements
 function initializeDatePicker(){
 	var nowTemp = new Date();
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
@@ -219,19 +226,12 @@ function initializeDatePicker(){
 	}).data('datepicker');
 }
 
+// Initialize Google map
 function initializeMap(){
 	google.maps.event.addDomListener(window, 'load', initialize);
 }
 
-function init_genrepicker(){
-
-	var genres = [];
-	genres.push("ah:GenreMovie");
-	genres.push("ah:GenreDance");
-	genres.push("ah:GenreCabaret");
-	createGenres(genres);
-}
-
+// Retrieves a list of genres from the RDF store
 function getGenreRDF(){
 	var genres = [];
 	var service = '/genres';
@@ -255,6 +255,7 @@ function getGenreRDF(){
 	});
 }
 
+// Retrieve a list of venue types from the RDF store
 function getVenueTypeRDF(){
 	var venueTypes = [];
 	var service = '/venueTypes';
@@ -277,39 +278,7 @@ function getVenueTypeRDF(){
 	});
 }
 
-function getFacetName(item){
-	var terms = item.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-	return terms[terms.length-1];
-}
-
-function sendSearchRequest() {
-	data = facetSearchData.join("&");
-	alert(data);
-	//$.get('/show', data=data, function(json){	
-	//}
-}
-
-function createGenres(genres) {
-	$.each(genres, function(index, item) {
-		$( "#genre" ).append( "<input type='checkbox' name='"+item+"' value='"+item+"'> "+getFacetName(item)+"<br/>" );
-	});
-	
-	$("#genre input").click(function() {
-		var parent = $(this).parent().attr('id');
-		var searchParameter = parent+"="+this.value;
-		if (this.checked) {
-			facetSearchData.push(searchParameter);
-			sendSearchRequest();
-		} else {
-			var index = $.inArray(searchParameter, facetSearchData);
-			if (index > -1) {
-				facetSearchData.splice(index, 1);
-				sendSearchRequest();
-			}
-		}
-	});
-}
-
+// Request access to the user's location
 function initializeGeolocation(){
 	// Function that allows the user to select their current position as a location for the events. 
 	// Note: it requires the user's permission
@@ -320,6 +289,7 @@ function initializeGeolocation(){
 	}
 }
 
+// Get users current geolocation, and the city/country where that is
 function geolocationSuccess(position){
 	var geoCheck = document.getElementById("geoCheck");
 	geoCheck.style.display = "inline";
