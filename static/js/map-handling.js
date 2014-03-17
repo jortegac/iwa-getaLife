@@ -2,6 +2,7 @@ var map;
 var facetSearchData = [];
 var markers = [];
 var infowindow = new google.maps.InfoWindow({});
+var visible = false;
 
 function initialize() {
 	var mapOptions = {
@@ -66,10 +67,29 @@ function setAllMap(map) {
 
 function processEvents(title, events){
 	
-	var div = $('<div class="list-group" text-align:justify"></div>');	
+	//var div = $('<div class="list-group" text-align:justify"></div>');	
+	var div = document.createElement('div');
+	$( div ).attr("class", "list-group");
 	
 	$.each(events, function(i, event) {
-		$.each(event, function(i, item) {			
+		$.each(event, function(i, item) {
+			
+			var heading = document.createElement('h4');
+			$( heading ).attr("class", "list-group-heading");
+			var text=document.createTextNode(item["title"].trim());
+			heading.appendChild(text);
+			
+			var list = document.createElement('p');
+			$(list).attr("class", "list-group-item-text");
+			
+			var description = document.createElement('p');
+			text = document.createTextNode("Description");
+			description.appendChild(text);
+			list.appendChild(description);
+			
+			
+			div.appendChild(list);
+			alert(div.outerHTML);
 				
 			var text = "<a href='#' class='list-group-item'>" +
 			"<h4 class='list-group-item-heading'>" + item["title"].trim() + "</h4>" +
@@ -78,12 +98,12 @@ function processEvents(title, events){
 			"<p><strong>Beginning</strong></p><p>" + item["beginning"].trim() + "</p>" +
 			"<p><strong>End</strong></p><p>" + item["end"].trim() + "</p>" +
 			"</p>" +
-			"</a>";			
-			div.append(text);
+			"</a>";	
+			
+			//div.appendChild(text);
 			
 		});
 	});
-	
 	return {title:title, message:div};
 }
 
@@ -108,7 +128,7 @@ function processVenues(venues) {
 			var events = "";
 			
 			if(!jQuery.isEmptyObject(item.events)){				
-				events = processEvents(item.venue_title.value.trim(), item.events);				
+				events = processEvents(item.venue_title.value.trim(), item.events);			
 			}
 			
 			
@@ -170,7 +190,6 @@ function createHtml(item){
 		div.append(p);
 	}
 
-	
 	return div[0].outerHTML;
 }
 
@@ -196,7 +215,16 @@ function createMarker(point, html, events) {
 		// Placeholder action
 		// CHANGE ME
 		if(events != "") {
-			BootstrapDialog.show(events);
+			//BootstrapDialog.show(events);
+			if(visible){
+				
+			} else {
+				alert(events["message"]);
+				visible = $(".panel").toggle("fast").is(":visible");
+				var panel = document.getElementById('panel');
+				var content = $.parseHTML( events );
+				$('#panelText').innerHTML = content;
+			}
 		}
 		
 	});

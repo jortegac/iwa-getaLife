@@ -29,6 +29,7 @@ $( document ).ready(function() {
 	
 	$("#closebutton").click(function(){
 		$(".panel").toggle("fast");
+		visible = false;
     });
 });
 
