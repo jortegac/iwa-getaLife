@@ -163,11 +163,15 @@ function processVenues(venues) {
 		}
 	});	
 	
-	// Put all the markers on the map
-	setAllMap(map);
-	
-	// Center the map on the first marker in the response
-	centerMap(markers[0]);
+	if( markers.length != 0) {
+		// Put all the markers on the map
+		setAllMap(map);
+
+		// Center the map on the first marker in the response
+		centerMap(markers[0]);
+	} else {
+		BootstrapDialog.alert({title:"Information", message:"No results found. Try a different combination"});
+	}
 }
 
 // Create the information to be displayed for this venue
