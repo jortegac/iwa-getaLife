@@ -165,6 +165,17 @@ def getEvents():
 		end = request.args.get('end')
 		
 		dateFilter = dateFilter + "FILTER (?event_beg_time <= \"%sT00:00:00Z\"^^xsd:dateTime) . \n FILTER(?event_end_time >= \"%sT00:00:00Z\"^^xsd:dateTime)." % (end, start)
+		
+	locationFilter = ""
+	
+	if 's' in request.args and 'w' in request.args and 'n' in request.args and 'e' in request.args:
+		south = request.args.get('s')
+		west = request.args.get('w')
+		north = request.args.get('n')
+		east = request.args.get('e')
+		
+		locationFilter = " FILTER ( ?venue_latitude >= %s && ?venue_latitude <= %s &&  ?venue_longitude >= %s && ?venue_longitude <= %s) ." % (south, north, west, east)
+		
 	
 	#Get all the venues
 	sparql = PREFIX + """SELECT DISTINCT ?venue ?venue_type ?venue_title ?venue_description ?venue_shortDescription ?venue_openingHours ?venue_locationAdress ?venue_latitude ?venue_longitude ?venue_email ?venue_homepage ?venue_geometry WHERE {
@@ -184,7 +195,9 @@ def getEvents():
 					OPTIONAL {?venue geo:long ?venue_longitude .}
 					OPTIONAL {?venue vcard:email ?venue_email .}
 					OPTIONAL {?venue foaf:homepage ?venue_homepage .}
-					OPTIONAL {?venue geo:geometry ?venue_geometry .}""" + type_filter + genre_filter + dateFilter + "}" 
+					OPTIONAL {?venue geo:geometry ?venue_geometry .}""" + type_filter + genre_filter + dateFilter + locationFilter + "}" 
+	
+	print sparql
 	
 	# Run the query
 	response = runQuery(sparql, 'JSON', jsoni=False)

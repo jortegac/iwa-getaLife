@@ -110,6 +110,8 @@ function processEvents(title, events){
 // Processes the venue data and puts them on the map
 function processVenues(venues) {
 	console.log(venues);
+	
+	deleteMarkers();
 
 	// Process each venue in the response
 	$.each(venues, function(i, item) {

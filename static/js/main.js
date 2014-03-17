@@ -175,11 +175,11 @@ function reverseGeocodeLocation(location) {
 			
 			var bounds = results[0].geometry.bounds;
 				//south
-				locationBoundS = bounds.Aa.j;
+				locationBoundN = bounds.Aa.j;
 				//west 
-				locationBoundW = bounds.Aa.k; 			
+				locationBoundS = bounds.Aa.k; 			
 				//north
-				locationBoundN = bounds.qa.j; 
+				locationBoundW = bounds.qa.j; 
 				//east
 				locationBoundE = bounds.qa.k; 	
 			}			
