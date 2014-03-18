@@ -160,7 +160,7 @@ function createHtml(item, point){
 	var br = $('<br/>');
 	
 	// Venue name
-	div.append(item.venue_title.value.trim());
+	div.append("<h4>" + item.venue_title.value.trim() + "</h4>");
 	
 	// Venue short description	
 	if(!jQuery.isEmptyObject(item.venue_shortDescription)){
@@ -199,8 +199,8 @@ function createHtml(item, point){
 // Zoom in and center the map on the marker
 function centerMap(marker) {
 	
-	map.setCenter(marker.position);	
-	map.setZoom(16);
+	map.panTo(marker.position);	
+	map.setZoom(13);
 }
 
 // Create marker
