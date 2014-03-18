@@ -3,6 +3,7 @@ var facetSearchData = [];
 var markers = [];
 var infowindow = new google.maps.InfoWindow({});
 var visible = false;
+var arrAddress = [];
 
 var geocoder = new google.maps.Geocoder();
 
@@ -160,7 +161,7 @@ function createHtml(item, point){
 	var br = $('<br/>');
 	
 	// Venue name
-	div.append("<h4>" + item.venue_title.value.trim() + "</h4>");
+	div.append("<h4 class='venueName'>" + item.venue_title.value.trim() + "</h4>");
 	
 	// Venue short description	
 	if(!jQuery.isEmptyObject(item.venue_shortDescription)){
@@ -209,17 +210,25 @@ function createMarker(point, html, events) {
 	var marker = new google.maps.Marker({
 		position: point
 	});
-	
+	var h4 = html.find("h4");
+	marker.setTitle(h4.html());
 	
 	// Add display information to the marker's info window
 	google.maps.event.addListener(marker, "click", function() {
-		
 		geocoder.geocode({'latLng': point}, function(results, status) {
 			var address = "No available address";
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log(results);
 				if (results[0]) {
-				address = results[0].formatted_address;
+					address = results[0].formatted_address;
+					arrAddress= results[0].address_components;
+					var city = "";
+					for (i = 0; i < arrAddress.length; i++) { 
+						if (arrAddress[i].types[0] == "locality") { 
+							city = arrAddress[i].long_name ;
+						}
+					}
+					getDBPediaInfos(marker.getTitle(), city);
 				}
 				
 				var p = $('<p><strong>Address:</strong></p>');
@@ -231,13 +240,8 @@ function createMarker(point, html, events) {
 			infowindow.setContent(html[0].outerHTML + p[0].outerHTML); 
 			infowindow.open(map,marker);
 		});
-	
-		
-		
-		// Placeholder action
-		// CHANGE ME
+		//Fill in the side panel with infos realtive to the events
 		if(events != "") {
-			//BootstrapDialog.show(events);
 			if(visible){
 				var myNode = document.getElementById("panelText");
 				while (myNode.firstChild) {
@@ -249,7 +253,6 @@ function createMarker(point, html, events) {
 			var content = $.parseHTML(events.outerHTML);
 			$('#panelText').append(content);
 		}
-		
 	});
 	
 	// Put marker in the global markers structure

@@ -24,10 +24,6 @@ $( document ).ready(function() {
 	getGenreRDF();
 	getVenueTypeRDF();
 	
-	//please don't touch this stuff
-	//TODO: associate the toggling with markers activity
-	//$(".panel").toggle("fast");
-	
 	$("#geolocate").change(function(){
 		if(this.checked) {
 			$('#locationTextField').val(currentCity + ", " + currentCountry);
@@ -314,8 +310,11 @@ function geolocationSuccess(position){
             }
 		}
 	});
+}
+
+function getDBPediaInfos(title, city){
+	$.getJSON('/dbpedia').done(function(json) {
+
+	});
 	
-	
-	
-	//TODO make the new LatLng available to the request
 }
