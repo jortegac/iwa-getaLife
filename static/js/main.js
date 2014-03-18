@@ -143,7 +143,7 @@ function search(){
 	var location = $("#locationTextField").val();
 	var locationQueryString = "";
 	
-	if (locationBoundS != "" && locationBoundW != "" && locationBoundN != "" && locationBoundE != ""){
+	if (location!= "" && locationBoundS != "" && locationBoundW != "" && locationBoundN != "" && locationBoundE != ""){
 		locationQueryString = "&s=" + locationBoundS + "&w=" + locationBoundW + "&n=" + locationBoundN + "&e=" + locationBoundE;
 	}
 	
