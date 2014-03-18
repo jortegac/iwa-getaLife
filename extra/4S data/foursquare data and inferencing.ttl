@@ -1,0 +1,41 @@
+@prefix ah: 	<http://purl.org/artsholland/1.0/> .
+@prefix iwa: 	<http://example.com/iwa/> .
+@prefix owl: 	<http://www.w3.org/2002/07/owl#> .
+@prefix fs: 	<https://api.foursquare.com/v2/venues/> .
+@prefix foaf:	<http://xmlns.com/foaf/0.1/> .
+@prefix geo:	<http://www.w3.org/2003/01/geo/wgs84_pos#> .
+
+<http://data.artsholland.com/venue/67797092-0c22-46a7-8b87-ff6dacf16af6> foaf:homepage <http://www.hofman-cafe.nl>.
+
+fs:4a814f00f964a520b4f61fe3 a fs:Venue ;
+	fs:title "Hofman Café"@nl;
+	geo:lat "52.09390408800598"^^xsd:float;
+	geo:long "5.121216773986816"^^xsd:float;
+	foaf:homepage <http://www.hofman-cafe.nl>.
+
+fs:4c11e5dd72caa593cc545ea4 a fs:Venue;
+	fs:title "Museum voor handwerktuigen station Kropswolde"@nl;
+	geo:lat "53.16172221282541"^^xsd:float;
+	geo:long "6.722077131271362"^^xsd:float.
+	
+fs:4bf54fd02d629521e23f6058 a fs:Venue;
+	fs:title "RASA"@nl;
+	geo:lat "52.09434200754375"^^xsd:float;
+	geo:long "5.118726642790898"^^xsd:float;
+	foaf:homepage <http://www.rasa.nl>.
+	
+fs:4cb441d775ebb60cc2eae0ad a fs:Venue;
+	fs:title "Mirliton theater"@nl;
+	geo:lat "52.0905950494175"^^xsd:float;
+	geo:long "5.115401744842529"^^xsd:float;
+	foaf:homepage <http://www.mirliton.nl>.
+	
+fs:51679dffe4b08a51f9249ad4 a fs:Venue;
+	fs:title "Het Fantaziehuis"@nl;
+	geo:lat "52.102703"^^xsd:float;
+	geo:long "5.088137"^^xsd:float;
+	foaf:homepage <http://www.fantaziehuis.nl/>.
+	
+<http://data.artsholland.com/venue/75d3b033-23e5-46ea-aaf3-1b85b28edd08> foaf:homepage <http://www.nai.nl>.
+
+foaf:homepage rdf:type owl:InverseFunctionalProperty .
