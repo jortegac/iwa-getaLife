@@ -349,7 +349,8 @@ function geolocationSuccess(position){
 }
 
 function getDBPediaInfos(title, city){
-	$.getJSON('/dbpedia').done(function(json) {
+	var url = "/dbpedia?&venue="+title+"&city="+city;
+	$.getJSON(url).done(function(json) {
 
 	});
 	

@@ -20,7 +20,8 @@ DBP_ENDPOINT = 'http://nl.dbpedia.org/sparql'
 #Prefixes needed for dbpedia
 DBP_PREFIX = """PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 				PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-				PREFIX dbpediaowl: <http://dbpedia.org/ontology/>"""
+				PREFIX dbpediaowl: <http://dbpedia.org/ontology/>
+				PREFIX nldbpedia:  <http://nl.dbpedia.org/property/>"""
 
 PREFIX = """PREFIX dc:<http://purl.org/dc/terms/>
 			PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -306,14 +307,73 @@ def getEventsByVenue(venueURI, genre_filter="", dateFilter=""):
 #Get infos from dbpedia on venues/city
 @app.route('/dbpedia', methods=['GET'])
 def getDBPediaInfos():
-	sparql = SPARQLWrapper("http://dbpedia.org/sparql")
-	query = DBP_PREFIX + """SELECT ?sub WHERE {
-			?sub dbpediaowl:name "Louis Hartlooper Complex" @nl
-			}LIMIT 10"""
-	sparql.setQuery(query)
+	venue = request.args.get('venue')
+	city = request.args.get('city')
+	sparql = SPARQLWrapper("http://nl.dbpedia.org/sparql")
+	venueQuery = DBP_PREFIX + """SELECT ?abstract ?link ?location ?architect_name ?current_use
+							WHERE {
+							  ?sub dbpediaowl:name '"""+ venue +"""' @nl;
+								dbpedia-owl:architect ?architect;
+								dbpediaowl:abstract ?abstract;
+								dbpediaowl:wikiPageExternalLink ?link;
+								nldbpedia:locatie ?location;
+								dbpedia-owl:currentlyUsedFor ?current_use.
+							  ?architect nldbpedia:naam ?architect_name .
+							} LIMIT 1"""
+	sparql.setQuery(venueQuery)
 	sparql.setReturnFormat(JSON)
 	results = sparql.query().convert()
-	return json.dumps(results)
+	infos = results["results"]["bindings"]
+	if infos == []:
+		cityQuery = DBP_PREFIX + """SELECT ?abstract ?population ?link
+									WHERE {
+									  ?city rdf:type dbpedia-owl:Place; 
+										rdfs:label '"""+ city +"""' @nl;
+										dbpediaowl:abstract ?abstract;
+										dbpedia-owl:populationTotal ?population;
+										dbpediaowl:wikiPageExternalLink ?link.
+									} LIMIT 1"""
+		sparql.setQuery(cityQuery)
+		sparql.setReturnFormat(JSON)
+		results = sparql.query().convert()
+		infos = results["results"]["bindings"]
+		return json.dumps({"city" : processCityData(infos)})	
+	
+	return json.dumps({"venue" : processVenueData(infos)})
+
+def processVenueData(venueInfo):
+	record = []
+	for venue in venueInfo:
+		abstract = venue["abstract"]["value"]
+		link = venue["link"]["value"]
+		if venue["location"]["type"] == "literal" or venue["location"]["type"] == "typed-literal":
+			location = venue["location"]["value"]
+		else:
+			location = ""
+		architect = venue["architect_name"]["value"]
+		current_use = venue["current_use"]["value"]
+			
+		record.append({
+			"abstract": abstract,
+			"link": link,
+			"location":location,
+			"architect":architect,
+			"current_use":current_use
+			})
+	return record
+	
+def processCityData(cityInfo):
+	record = []
+	for city in cityInfo:
+		abstract = city["abstract"]["value"]
+		population = city["population"]["value"]
+		link = city["link"]["value"]
+		record.append({
+			"abstract": abstract,
+			"link": link,
+			"population":population,
+			})
+	return record
     
 if __name__ == '__main__':    
     app.run(debug=True)

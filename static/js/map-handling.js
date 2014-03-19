@@ -280,19 +280,6 @@ function createMarker(point, html, events) {
 				infowindow.open(map,marker);
 			}
 		});
-		//Fill in the side panel with infos realtive to the events
-		if(events != "") {
-			if(visible){
-				var myNode = document.getElementById("panelText");
-				while (myNode.firstChild) {
-					myNode.removeChild(myNode.firstChild);
-				}
-			} else {
-				visible = $(".panel").toggle("fast").is(":visible");
-			}
-			var content = $.parseHTML(events.outerHTML);
-			$('#panelText').append(content);
-		}
 	});
 	
 	// Put marker in the global markers structure
