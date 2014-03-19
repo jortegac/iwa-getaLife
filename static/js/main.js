@@ -146,7 +146,6 @@ function search(){
 	// Build full query string
 	var endpoint = "/events?" + genresQueryString + typesQueryString + datesQueryString + locationQueryString;
 
-    centerOnSearchedLocation(location);	
 
 	console.log(endpoint);
 	
@@ -155,14 +154,28 @@ function search(){
 		var venues = json.results.bindings;
 		
 		if (venues.length != 0){
+            var firstVenue = getFirstVenueWithEvents(venues);
+            if(firstVenue !== undefined) {
+                centerOnVenue(firstVenue);
+            }
 			processVenues(venues);
 		} else {
+            centerOnSearchedLocation(location);	
 			// No info to display
 			BootstrapDialog.alert({title:"Information", message:"No results found. Try a different combination"});
 		}
 		
 		stopLoadingAnimation();
 	});
+}
+
+// center the map according to a certain venue
+function centerOnVenue(venue) {
+    console.log("the venue", venue);
+    var lat = venue.venue_latitude.value;
+    var lng = venue.venue_longitude.value;
+    var newCenter = new google.maps.LatLng(lat,lng);
+    map.setCenter(newCenter);
 }
 
 // center the map on a certain location (for example, a city name)

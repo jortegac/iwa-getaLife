@@ -108,6 +108,16 @@ function processEvents(title, events){
 	return div;
 }
 
+function getFirstVenueWithEvents(venues) {
+    for(var i in venues){
+        var venue = venues[i];
+		if(!jQuery.isEmptyObject(venue.events)){
+            console.log("one venue found", i, venue);
+            return venue;
+        }
+    }
+}
+
 // Processes the venue data and puts them on the map
 function processVenues(venues) {
 	console.log(venues);
