@@ -90,12 +90,21 @@
 }
 
 #info_window{
+  min-width: 400px;
   width: 400px;
 }
 
-.gm-style .gm-style-iw, .gm-style .gm-style-iw a, .gm-style .gm-style-iw span, .gm-style .gm-style-iw label, .gm-style .gm-style-iw div {
+.gm-style .gm-style-iw{
+  min-width: 400px;
+  width: 600px;
+  min-height: 300px;
   max-height: 300px;
   /*padding: 0px 10px 5px 5px;*/
+  overflow-y: scroll;
+  overflow-x: visible;
+}
+
+.gm-style .gm-style-iw div {
   overflow-y: scroll;
   overflow-x: visible;
 }
@@ -103,3 +112,5 @@
 .gm-style-iw div {
   overflow:visible !important;
 }
+
+

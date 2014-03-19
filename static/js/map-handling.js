@@ -222,17 +222,44 @@ function createMarker(point, html, events) {
 				address = results[0].formatted_address;
 				}
 				
-				var p = $('<p><strong>Address:</strong></p>');
+				var addressHtml = $('<p><strong>Address:</strong></p>');
 				var a = $('<p></p>');
 				a.append(address);
-				p.append(a);
+				addressHtml.append(a);
 				console.log(address);
 				
 				// Really bad hack to avoid overflowing of the content for not being in the div
 				baseHtml = html[0].outerHTML.replace("</div>", "");
+				
+				console.log(events);
+				
+				venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>"			
+			
+				var tabs = "<div class='ionTabs' id='tabs_1' data-name='Tabs_Group_name'>" +
+								"<ul class='ionTabs__head'>" +
+									"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
+									"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
+								"</ul>" +
+								"<div class='ionTabs__body'>" +
+									"<div class='ionTabs__item' data-name='Venue'>" +
+										venueHtml +
+									"</div>" +
+									"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
+										events.outerHTML +
+									"</div>" +
+									"<div class='ionTabs__preloader'></div>" +
+								"</div>" +
+							"</div>" ;
+						
+				google.maps.event.addListener(infowindow, 'domready', function (e) {
+					$.ionTabs("#tabs_1");
+					
+				});
+				
+				//infowindow.setContent(baseHtml + p[0].outerHTML + "</div>"); 
+				infowindow.setContent(tabs); 
+				infowindow.open(map,marker);
 			}
-			infowindow.setContent(baseHtml + p[0].outerHTML + "</div>"); 
-			infowindow.open(map,marker);
 		});
 	
 		
