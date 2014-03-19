@@ -227,8 +227,11 @@ function createMarker(point, html, events) {
 				a.append(address);
 				p.append(a);
 				console.log(address);
+				
+				// Really bad hack to avoid overflowing of the content for not being in the div
+				baseHtml = html[0].outerHTML.replace("</div>", "");
 			}
-			infowindow.setContent(html[0].outerHTML + p[0].outerHTML); 
+			infowindow.setContent(baseHtml + p[0].outerHTML + "</div>"); 
 			infowindow.open(map,marker);
 		});
 	
