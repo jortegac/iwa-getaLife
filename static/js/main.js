@@ -145,7 +145,9 @@ function search(){
 	
 	// Build full query string
 	var endpoint = "/events?" + genresQueryString + typesQueryString + datesQueryString + locationQueryString;
-	
+
+    centerOnSearchedLocation(location);	
+
 	console.log(endpoint);
 	
 	$.getJSON(endpoint).done(function(json) {
@@ -162,6 +164,27 @@ function search(){
 		stopLoadingAnimation();
 	});
 }
+
+// center the map on a certain location (for example, a city name)
+function centerOnSearchedLocation(location) {
+    // FIXME: maybe this code is a bit duplicated to reverseGeocodeLocation?
+    var query = {'address': location};
+	geocoder.geocode(query, function(results, status) {
+		if (status !== google.maps.GeocoderStatus.OK) {
+            console.warn("problems with geocoder; query was:", query);
+            return;
+        }
+		console.log(results);
+        var geometry = results[0].geometry;
+		if(geometry.bounds !== undefined){
+            var newCenter = geometry.bounds.getCenter();
+        } else {
+            var newCenter = geometry.location;
+        }
+        map.setCenter(newCenter);
+    });
+}
+
 // This function takes a location and finds the bounding box that emcompases the location
 function reverseGeocodeLocation(location) {
 	console.log("reverseGeocodeLocation"); 
