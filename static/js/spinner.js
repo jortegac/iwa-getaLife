@@ -24,10 +24,13 @@ var spinner;
 
 function startLoadingAnimation(){
 	// Trigger spinner animation
-	spinner = new Spinner(opts).spin();
-	target.appendChild(spinner.el);
+    if(spinner === undefined) {
+    	spinner = new Spinner(opts).spin();
+	    target.appendChild(spinner.el);
+    }
 }
 
 function stopLoadingAnimation(){
 	spinner.stop();
+    spinner = undefined;
 }
