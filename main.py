@@ -14,6 +14,13 @@ SPARQL_ENDPOINT = 'http://localhost:8080/openrdf-sesame/repositories/IWA-AH'
 
 #ArtsHolland sparql endpoint
 AH_ENDPOINT = 'http://api.artsholland.com/sparql'
+#DBpedia sparql endpoint
+DBP_ENDPOINT = 'http://nl.dbpedia.org/sparql'
+
+#Prefixes needed for dbpedia
+DBP_PREFIX = """PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+				PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+				PREFIX dbpediaowl: <http://dbpedia.org/ontology/>"""
 
 PREFIX = """PREFIX dc:<http://purl.org/dc/terms/>
 			PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -294,7 +301,19 @@ def getEventsByVenue(venueURI, genre_filter="", dateFilter=""):
 			OPTIONAL {?event time:hasEnd ?event_end_time}
 			FILTER(?event_venue = <%s>)""" % (venueURI,) + genre_filter + dateFilter + "}" 
 			
-	return runQuery(sparql, 'JSON', jsoni=False)	
+	return runQuery(sparql, 'JSON', jsoni=False)
+
+#Get infos from dbpedia on venues/city
+@app.route('/dbpedia', methods=['GET'])
+def getDBPediaInfos():
+	sparql = SPARQLWrapper("http://dbpedia.org/sparql")
+	query = DBP_PREFIX + """SELECT ?sub WHERE {
+			?sub dbpediaowl:name "Louis Hartlooper Complex" @nl
+			}LIMIT 10"""
+	sparql.setQuery(query)
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+	return json.dumps(results)
     
 if __name__ == '__main__':    
     app.run(debug=True)

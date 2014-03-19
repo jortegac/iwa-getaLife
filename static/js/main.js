@@ -24,10 +24,6 @@ $( document ).ready(function() {
 	getGenreRDF();
 	getVenueTypeRDF();
 	
-	//please don't touch this stuff
-	//TODO: associate the toggling with markers activity
-	//$(".panel").toggle("fast");
-	
 	$("#geolocate").change(function(){
 		if(this.checked) {
 			$('#locationTextField').val(currentCity + ", " + currentCountry);
@@ -149,7 +145,8 @@ function search(){
 	
 	// Build full query string
 	var endpoint = "/events?" + genresQueryString + typesQueryString + datesQueryString + locationQueryString;
-	
+
+
 	console.log(endpoint);
 	
 	$.getJSON(endpoint).done(function(json) {
@@ -157,8 +154,13 @@ function search(){
 		var venues = json.results.bindings;
 		
 		if (venues.length != 0){
+            var firstVenue = getFirstVenueWithEvents(venues);
+            if(firstVenue !== undefined) {
+                centerOnVenue(firstVenue);
+            }
 			processVenues(venues);
 		} else {
+            centerOnSearchedLocation(location);	
 			// No info to display
 			BootstrapDialog.alert({title:"Information", message:"No results found. Try a different combination"});
 		}
@@ -166,6 +168,36 @@ function search(){
 		stopLoadingAnimation();
 	});
 }
+
+// center the map according to a certain venue
+function centerOnVenue(venue) {
+    console.log("the venue", venue);
+    var lat = venue.venue_latitude.value;
+    var lng = venue.venue_longitude.value;
+    var newCenter = new google.maps.LatLng(lat,lng);
+    map.setCenter(newCenter);
+}
+
+// center the map on a certain location (for example, a city name)
+function centerOnSearchedLocation(location) {
+    // FIXME: maybe this code is a bit duplicated to reverseGeocodeLocation?
+    var query = {'address': location};
+	geocoder.geocode(query, function(results, status) {
+		if (status !== google.maps.GeocoderStatus.OK) {
+            console.warn("problems with geocoder; query was:", query);
+            return;
+        }
+		console.log(results);
+        var geometry = results[0].geometry;
+		if(geometry.bounds !== undefined){
+            var newCenter = geometry.bounds.getCenter();
+        } else {
+            var newCenter = geometry.location;
+        }
+        map.setCenter(newCenter);
+    });
+}
+
 // This function takes a location and finds the bounding box that emcompases the location
 function reverseGeocodeLocation(location) {
 	console.log("reverseGeocodeLocation"); 
@@ -314,8 +346,11 @@ function geolocationSuccess(position){
             }
 		}
 	});
+}
+
+function getDBPediaInfos(title, city){
+	$.getJSON('/dbpedia').done(function(json) {
+
+	});
 	
-	
-	
-	//TODO make the new LatLng available to the request
 }
