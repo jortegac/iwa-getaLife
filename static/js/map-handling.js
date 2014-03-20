@@ -264,11 +264,9 @@ function createMarker(point, html, events, venueTitle) {
 					
 					console.log(events);
 					
-					venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>"			
-				
-				venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>"			
+					venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>";			
 			
-				var tabs = "<div class='ionTabs' id='tabs_1' data-name='Tabs_Group_name'>" +
+					var tabs = "<div class='ionTabs' id='tabs_1' data-name='Tabs_Group_name'>" +
 								"<ul class='ionTabs__head'>" +
 									"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
 									"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
@@ -282,7 +280,7 @@ function createMarker(point, html, events, venueTitle) {
 									"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
 										events.outerHTML +
 									"</div>" +
-									"<div id='eventsTab' class='ionTabs__item' data-name='DBPedia'>" +
+									"<div id='dbpediaTab' class='ionTabs__item' data-name='DBPedia'>" +
 										dbpedia.outerHTML +
 									"</div>" +
 									"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><div id='tweets-modal'></div></div></div>" +
@@ -290,16 +288,17 @@ function createMarker(point, html, events, venueTitle) {
 								"</div>" +
 							"</div>" ;
 						
-				google.maps.event.clearListeners(infowindow, 'domready');
-				
-				google.maps.event.addListener(infowindow, 'domready', function (e) {
-					$.ionTabs("#tabs_1", {type: "none"});
-					twitterSearch(venueTitle, marker.getPosition());
+					google.maps.event.clearListeners(infowindow, 'domready');
 					
-				});
+					google.maps.event.addListener(infowindow, 'domready', function (e) {
+						$.ionTabs("#tabs_1", {type: "none"});
+						twitterSearch(venueTitle, marker.getPosition());
+						
+					});
 				
-				infowindow.setContent(tabs); 
-				infowindow.open(map,marker);
+					infowindow.setContent(tabs); 
+					infowindow.open(map,marker);
+				});
 			}
 		});
 	});
