@@ -42,6 +42,9 @@ $( document ).ready(function() {
 			myNode.removeChild(myNode.firstChild);
 		}
     });
+
+    $("#stats").hide();
+    $("#showStats").attr("checked", false);
 });
 
 function initializeLocationAutocomplete(){
@@ -150,8 +153,9 @@ function search(){
 	console.log(endpoint);
 	
 	$.getJSON(endpoint).done(function(json) {
-		console.log(json);		
+		console.log(json);
 		var venues = json.results.bindings;
+        enableStatsPanel(json);
 		
 		if (venues.length != 0){
             var firstVenue = getFirstVenueWithEvents(venues);

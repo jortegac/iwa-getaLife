@@ -39,7 +39,9 @@
 	<script type="text/javascript" src="/static/js/spin.js"></script>
 	<script type="text/javascript" src="/static/js/spinner.js"></script>
 	<script type="text/javascript" src="/static/js/ion-tabs/ion.tabs.js"></script>
+	<script type="text/javascript" src="/static/js/stats.js"></script>
 	<script type="text/javascript" src="/static/js/main.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
 </head>
 
 <body>
@@ -71,6 +73,28 @@
 		</div>
 	</div>
 	<div id="map-canvas" ></div>
+<style>
 
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#stats {
+    height: 300px;
+    position: absolute;
+}
+
+</style>
+
+<div id="showStats_div"><input type="checkbox" id="showStats" value="showStats"/>Show stats</div>
+<div id="stats" class="stats_panel">
+  <form role="form">
+    <label><input class='stats_input' type="radio" name="mode" value="grouped"> Grouped</label>
+    <label><input class='stats_input' type="radio" name="mode" value="stacked" checked> Stacked</label>
+  </form>
+</div>
 </body>
 </html>
