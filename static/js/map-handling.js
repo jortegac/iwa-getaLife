@@ -283,7 +283,7 @@ function createMarker(point, html, events, venueTitle) {
 									"<div id='dbpediaTab' class='ionTabs__item' data-name='DBPedia'>" +
 										dbpedia.outerHTML +
 									"</div>" +
-									"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><div id='tweets-modal'></div></div></div>" +
+									"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><span>Waiting for data...</span><div id='tweets-modal'></div></div></div>" +
 									"<div class='ionTabs__preloader'></div>" +
 								"</div>" +
 							"</div>" ;

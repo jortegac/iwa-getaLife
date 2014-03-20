@@ -2,7 +2,7 @@ var TWITTER = "http://twitter.com/"
 
 function twitterSearch(searchTerm, position) {
 	var tweetsDiv = $('#tweets');
-	tweetsDiv.empty();
+	
 	console.log(position);
 	var endpoint = "/twitter?search=" + searchTerm + "&geocode=" + position.k + "," + position.A + ",1km";
 	console.log(endpoint);
@@ -11,6 +11,7 @@ function twitterSearch(searchTerm, position) {
 		console.log(json);		
 		var tweets = json.statuses;
 		
+		tweetsDiv.empty();
 		$.each(tweets, function(i, tweet) {			
 			var user = tweet.user.screen_name;
 			var tweet_id = tweet.id;
