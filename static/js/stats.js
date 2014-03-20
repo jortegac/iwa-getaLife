@@ -24,7 +24,19 @@ function enableStatsPanel(json) {
     var entries = stackableEntries(aggregates_by_genre,types);
     console.log("entries",entries);
     var friendlyTypes = genFriendlyTypes(types);
-    initStats(entries,friendlyTypes,genres);
+    var friendlyGenres = genFriendlyGenres(genres);
+    initStats(entries,friendlyTypes,friendlyGenres);
+}
+
+function genFriendlyGenres(types) {
+    var ret = [];
+    for(var i in types){
+        var t = types[i];
+        var tmp = t.replace(/.*\//,"");
+        tmp = tmp.replace(/Genre/,"");
+        ret.push(tmp);
+    }
+    return ret;
 }
 
 function genFriendlyTypes(types) {
@@ -116,7 +128,7 @@ function stackableEntries(aggregates, types) {
   return entries;
 }
 
-function initStats(entries,friendlyTypes, genres) {
+function initStats(entries,friendlyTypes, friendlyGenres) {
 
   $("#showStats_div").fadeIn();
 
@@ -131,7 +143,7 @@ function initStats(entries,friendlyTypes, genres) {
   statsvars.yGroupMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y; }); });
   statsvars.yStackMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); });
 
-  var margin = {top: 40, right: 10, bottom: 20, left: 10},
+  var margin = {top: 40, right: 100, bottom: 20, left: 10},
       width = 500 - margin.left - margin.right;
   statsvars.height = 250 - margin.top - margin.bottom;
 
@@ -147,6 +159,8 @@ function initStats(entries,friendlyTypes, genres) {
   /*var color = d3.scale.linear()
       .domain([0, statsvars.n - 1])
       .range(["#aad", "#556"]); */
+
+
 
 
   var axislabels = d3.scale.ordinal()
@@ -167,6 +181,36 @@ function initStats(entries,friendlyTypes, genres) {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+  var w = 500;
+  // add legend   
+  var legend = svg.append("g")
+      .attr("class", "legend")
+      .attr("x", w - 100)
+      .attr("y", 25)
+      .attr("height", 100)
+      .attr("width", 100);
+
+  legend.selectAll('g').data(friendlyGenres)
+    .enter()
+    .append('g')
+    .each(function(d, i) {
+      var g = d3.select(this);
+      g.append("rect")
+        .attr("x", w - 110)
+        .attr("y", i*25)
+        .attr("width", 10)
+        .attr("height", 10)
+        .style("fill", function(d) { return color(i); });
+        
+      g.append("text")
+        .attr("x", w - 95)
+        .attr("y", i * 25 + 8)
+        .attr("height",30)
+        .attr("width",100)
+        .style("fill", function(dd) {return color(i); })
+        .text(function(dd){return d;});
+     });
+
   var layer = svg.selectAll(".layer")
       .data(layers)
     .enter().append("g")
@@ -179,17 +223,10 @@ function initStats(entries,friendlyTypes, genres) {
       .attr("x", function(d) { return statsvars.x(d.x); })
       .attr("y", statsvars.height)
       .attr("width", statsvars.x.rangeBand())
-      .attr("height", 0)
-    .append("p")
-      .text(function(d) { return d.x; });
-      
-    
-bar.append("text")
-    .attr("dy", ".75em")
-    .attr("y", 6)
-    .attr("x", x(data[0].dx) / 2)
-    .attr("text-anchor", "middle")
-    .text(function(d) { return formatCount(d.y); });
+      .attr("height", 0);
+
+  //layer.append("text")
+  //    .text(function(d){ return d.x });
 
   statsvars.rect.transition()
       .delay(function(d, i) { return i * 10; })
