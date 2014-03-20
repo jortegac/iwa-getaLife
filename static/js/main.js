@@ -347,11 +347,3 @@ function geolocationSuccess(position){
 		}
 	});
 }
-
-function getDBPediaInfos(title, city){
-	var url = "/dbpedia?&venue="+title+"&city="+city;
-	$.getJSON(url).done(function(json) {
-
-	});
-	
-}

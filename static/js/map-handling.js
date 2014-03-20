@@ -4,6 +4,7 @@ var markers = [];
 var infowindow = new google.maps.InfoWindow({});
 var visible = false;
 var arrAddress = [];
+var abstract = "";
 
 var geocoder = new google.maps.Geocoder();
 
@@ -73,7 +74,6 @@ function processEvents(title, events){
 	//var div = $('<div class="list-group" text-align:justify"></div>');	
 	var div = document.createElement('div');
 	$( div ).attr("class", "list-group");
-	var parser = new DOMParser()
 	
 	$.each(events, function(i, event) {
 		$.each(event, function(i, item) {
@@ -227,30 +227,44 @@ function createMarker(point, html, events, venueTitle) {
 	google.maps.event.addListener(marker, "click", function() {
 		geocoder.geocode({'latLng': point}, function(results, status) {
 			var address = "No available address";
+			var city = "";
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log(results);
 				if (results[0]) {
 					address = results[0].formatted_address;
 					arrAddress= results[0].address_components;
-					var city = "";
 					for (i = 0; i < arrAddress.length; i++) { 
 						if (arrAddress[i].types[0] == "locality") { 
 							city = arrAddress[i].long_name ;
 						}
 					}
-					getDBPediaInfos(venueTitle, city);
 				}
 				
-				var addressHtml = $('<p><strong>Address:</strong></p>');
-				var a = $('<p></p>');
-				a.append(address);
-				addressHtml.append(a);
-				console.log(address);
-				
-				// Really bad hack to avoid overflowing of the content for not being in the div
-				baseHtml = html[0].outerHTML.replace("</div>", "");
-				
-				console.log(events);
+				var url = "/dbpedia?&venue="+marker.getTitle()+"&city="+city;
+				var dbpedia = document.createElement('div');
+				$.getJSON(url).done(function(json) {
+					if (json.venue == undefined){
+						$.each(json.city, function(index, info){
+							dbpedia = createDBPediaHTML(city, info);
+						});
+					}
+					else {
+						$.each(json.venue, function(index, info){
+							dbpedia = createDBPediaHTML(marker.getTitle(), info);
+						});
+					}
+					var addressHtml = $('<p><strong>Address:</strong></p>');
+					var a = $('<p></p>');
+					a.append(address);
+					addressHtml.append(a);
+					console.log(address);
+					
+					// Really bad hack to avoid overflowing of the content for not being in the div
+					baseHtml = html[0].outerHTML.replace("</div>", "");
+					
+					console.log(events);
+					
+					venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>"			
 				
 				venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>"			
 			
@@ -258,6 +272,7 @@ function createMarker(point, html, events, venueTitle) {
 								"<ul class='ionTabs__head'>" +
 									"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
 									"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
+									"<li  class='ionTabs__tab' data-target='DBPedia'>More information</li>" +
 									"<li  class='ionTabs__tab' data-target='Twitter'>Twitter</li>" +
 								"</ul>" +
 								"<div class='ionTabs__body'>" +
@@ -266,6 +281,9 @@ function createMarker(point, html, events, venueTitle) {
 									"</div>" +
 									"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
 										events.outerHTML +
+									"</div>" +
+									"<div id='eventsTab' class='ionTabs__item' data-name='DBPedia'>" +
+										dbpedia.outerHTML +
 									"</div>" +
 									"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><div id='tweets-modal'></div></div></div>" +
 									"<div class='ionTabs__preloader'></div>" +
@@ -290,5 +308,52 @@ function createMarker(point, html, events, venueTitle) {
 	markers.push(marker);
 }
 
-
+function createDBPediaHTML(name, info){
+	var div = document.createElement('div');
+	$( div ).attr("class", "list-group");
+	$( div ).attr("id", "dbpediaInfo");
+	
+	var heading = document.createElement('h4');
+	$( heading ).attr("class", "list-group-heading");
+	var text=document.createTextNode(name);
+	heading.appendChild(text);
+	div.appendChild(heading);
+	
+	var abstract = document.createElement('p');
+	text=document.createTextNode(info.abstract);
+	abstract.appendChild(text);
+	div.appendChild(abstract);
+	
+	var par = document.createElement('p');
+	var link = document.createElement('a');
+	$(link).attr("href", info.link);
+	$(link).attr("target", "_blank");
+	text=document.createTextNode("Visit Website");
+	link.appendChild(text);
+	par.appendChild(link);
+	div.appendChild(par);
+	
+	if(!$.isEmptyObject(info.location) && !(info.location == "")){
+		var location = document.createElement('p');
+		text = document.createTextNode("Location: " + info.location);
+		location.appendChild(text);
+		div.appendChild(location);		
+	}
+	
+	if(!$.isEmptyObject(info.architect) && !(info.architect == "")){
+		var architect = document.createElement('p');
+		text = document.createTextNode("Architect: " + info.architect);
+		architect.appendChild(text);
+		div.appendChild(architect);		
+	}
+	
+	if(!$.isEmptyObject(info.current_use)){
+		var use = document.createElement('p');
+		text = document.createTextNode("Currently used as: " + info.current_use);
+		use.appendChild(text);
+		div.appendChild(use);		
+	}
+	
+	return div;
+}
 
