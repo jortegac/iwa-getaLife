@@ -240,65 +240,52 @@ function createMarker(point, html, events, venueTitle) {
 					}
 				}
 				
-				var url = "/dbpedia?&venue="+marker.getTitle()+"&city="+city;
-				var dbpedia = document.createElement('div');
-				$.getJSON(url).done(function(json) {
-					if (json.venue == undefined){
-						$.each(json.city, function(index, info){
-							dbpedia = createDBPediaHTML(city, info);
-						});
-					}
-					else {
-						$.each(json.venue, function(index, info){
-							dbpedia = createDBPediaHTML(marker.getTitle(), info);
-						});
-					}
-					var addressHtml = $('<p><strong>Address:</strong></p>');
-					var a = $('<p></p>');
-					a.append(address);
-					addressHtml.append(a);
-					console.log(address);
-					
-					// Really bad hack to avoid overflowing of the content for not being in the div
-					baseHtml = html[0].outerHTML.replace("</div>", "");
-					
-					console.log(events);
-					
-					venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>";			
-			
-					var tabs = "<div class='ionTabs' id='tabs_1' data-name='Tabs_Group_name'>" +
-								"<ul class='ionTabs__head'>" +
-									"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
-									"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
-									"<li  class='ionTabs__tab' data-target='DBPedia'>More information</li>" +
-									"<li  class='ionTabs__tab' data-target='Twitter'>Twitter</li>" +
-								"</ul>" +
-								"<div class='ionTabs__body'>" +
-									"<div class='ionTabs__item' data-name='Venue'>" +
-										venueHtml +
-									"</div>" +
-									"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
-										events.outerHTML +
-									"</div>" +
-									"<div id='dbpediaTab' class='ionTabs__item' data-name='DBPedia'>" +
-										dbpedia.outerHTML +
-									"</div>" +
-									"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><span>Waiting for data...</span><div id='tweets-modal'></div></div></div>" +
-									"<div class='ionTabs__preloader'></div>" +
-								"</div>" +
-							"</div>" ;
-						
-					google.maps.event.clearListeners(infowindow, 'domready');
-					
-					google.maps.event.addListener(infowindow, 'domready', function (e) {
-						$.ionTabs("#tabs_1", {type: "none"});
-						twitterSearch(venueTitle, marker.getPosition());
-						
-					});
 				
-					infowindow.setContent(tabs); 
-					infowindow.open(map,marker);
+				var addressHtml = $('<p><strong>Address:</strong></p>');
+				var a = $('<p></p>');
+				a.append(address);
+				addressHtml.append(a);
+				console.log(address);
+				
+				// Really bad hack to avoid overflowing of the content for not being in the div
+				baseHtml = html[0].outerHTML.replace("</div>", "");
+				
+				console.log(events);
+					
+				venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>";			
+		
+				var tabs = "<div class='ionTabs' id='tabs_1' data-name='Tabs_Group_name'>" +
+							"<ul class='ionTabs__head'>" +
+								"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
+								"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
+								"<li  class='ionTabs__tab' data-target='DBPedia'>More information</li>" +
+								"<li  class='ionTabs__tab' data-target='Twitter'>Twitter</li>" +
+							"</ul>" +
+							"<div class='ionTabs__body'>" +
+								"<div class='ionTabs__item' data-name='Venue'>" +
+									venueHtml +
+								"</div>" +
+								"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
+									events.outerHTML +
+								"</div>" +
+								"<div id='dbpediaTab' class='ionTabs__item' data-name='DBPedia'><div id='dbpedia-info'><span>Waiting for data...</span></div></div>" +
+								"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><span>Waiting for data...</span><div id='tweets-modal'></div></div></div>" +
+								"<div class='ionTabs__preloader'></div>" +
+							"</div>" +
+						"</div>" ;
+					
+				google.maps.event.clearListeners(infowindow, 'domready');
+				
+				google.maps.event.addListener(infowindow, 'domready', function (e) {
+					$.ionTabs("#tabs_1", {type: "none"});
+					dbpediaSearch(venueTitle, city);
+					twitterSearch(venueTitle, marker.getPosition());
+					
 				});
+			
+				infowindow.setContent(tabs); 
+				infowindow.open(map,marker);
+				
 			}
 		});
 	});
