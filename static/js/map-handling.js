@@ -127,7 +127,7 @@ function processVenues(venues) {
 	// Process each venue in the response
 	$.each(venues, function(i, item) {
 		
-		
+		var venueTitle = item.venue_title.value.trim();
 		console.log(item);
 		
 		if(!jQuery.isEmptyObject(item.venue_longitude) && !jQuery.isEmptyObject(item.venue_latitude) ){
@@ -139,9 +139,9 @@ function processVenues(venues) {
 			console.log(lat);	
 			
 			var events = "";
-			
+
 			if(!jQuery.isEmptyObject(item.events)){				
-				events = processEvents(item.venue_title.value.trim(), item.events);			
+				events = processEvents(venueTitle, item.events);	
 			}
 			
 			
@@ -150,7 +150,7 @@ function processVenues(venues) {
 			// Create the information to be displayed for each venue
 			var html = createHtml(item, point);
 			// Create the marker using the coordinates and the display information
-			createMarker(point, html, events);
+			createMarker(point, html, events, venueTitle);
 		}
 	});	
 	
@@ -215,13 +215,13 @@ function centerMap(marker) {
 }
 
 // Create marker
-function createMarker(point, html, events) {
+function createMarker(point, html, events, venueTitle) {
 	// Create marker using the coordinates in the point
 	var marker = new google.maps.Marker({
 		position: point
 	});
-	var h4 = html.find("h4");
-	marker.setTitle(h4.html());
+	
+	marker.setTitle(venueTitle);
 	
 	// Add display information to the marker's info window
 	google.maps.event.addListener(marker, "click", function() {
@@ -238,7 +238,7 @@ function createMarker(point, html, events) {
 							city = arrAddress[i].long_name ;
 						}
 					}
-					getDBPediaInfos(marker.getTitle(), city);
+					getDBPediaInfos(venueTitle, city);
 				}
 				
 				var addressHtml = $('<p><strong>Address:</strong></p>');
@@ -258,6 +258,7 @@ function createMarker(point, html, events) {
 								"<ul class='ionTabs__head'>" +
 									"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
 									"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
+									"<li  class='ionTabs__tab' data-target='Twitter'>Twitter</li>" +
 								"</ul>" +
 								"<div class='ionTabs__body'>" +
 									"<div class='ionTabs__item' data-name='Venue'>" +
@@ -266,16 +267,19 @@ function createMarker(point, html, events) {
 									"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
 										events.outerHTML +
 									"</div>" +
+									"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><div id='tweets-modal'></div></div></div>" +
 									"<div class='ionTabs__preloader'></div>" +
 								"</div>" +
 							"</div>" ;
 						
+				google.maps.event.clearListeners(infowindow, 'domready');
+				
 				google.maps.event.addListener(infowindow, 'domready', function (e) {
-					$.ionTabs("#tabs_1");
+					$.ionTabs("#tabs_1", {type: "none"});
+					twitterSearch(venueTitle, marker.getPosition());
 					
 				});
 				
-				//infowindow.setContent(baseHtml + p[0].outerHTML + "</div>"); 
 				infowindow.setContent(tabs); 
 				infowindow.open(map,marker);
 			}
