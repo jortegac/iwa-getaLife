@@ -3,8 +3,9 @@ from SPARQLWrapper import SPARQLWrapper, RDF, JSON, XML, N3
 from StringIO import StringIO
 import requests
 import json
-import urllib2
+import urllib2 as urllib
 import logging
+import oauth2 as oauth
 
 app = Flask(__name__)
 app.logger.addHandler(logging.FileHandler("app.log"))
@@ -33,6 +34,19 @@ PREFIX = """PREFIX dc:<http://purl.org/dc/terms/>
 			PREFIX owl:<http://www.w3.org/2002/07/owl#>
 			PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 			PREFIX ah:<http://purl.org/artsholland/1.0/>"""
+			
+# Twitter credentials
+access_token_key = "35304484-ikVK472PYKZ5Twa7KakHZmstc0w8UTgfOBIVqpYDT"
+access_token_secret = "FZKwNbX6FmF5OwA20c9nvtFDmAvxBOO5XqxEFGbqxLk"
+consumer_key = "qRRxU8I0nhSLJ5CDWe72ZQ"
+consumer_secret = "HKDrhksRzMWkl1cKlCnx9XBa79I21pWd57ZGoPNcsXI"
+_debug = 0
+oauth_token    = oauth.Token(key=access_token_key, secret=access_token_secret)
+oauth_consumer = oauth.Consumer(key=consumer_key, secret=consumer_secret)
+signature_method_hmac_sha1 = oauth.SignatureMethod_HMAC_SHA1()
+http_method = "GET"
+http_handler  = urllib.HTTPHandler(debuglevel=_debug)
+https_handler = urllib.HTTPSHandler(debuglevel=_debug)
 			
 @app.route('/')
 def index():
@@ -381,6 +395,49 @@ def processCityData(cityInfo):
 			"link": link
 			})
 	return record
+	
+#Get infos from dbpedia on venues/city
+@app.route('/twitter', methods=['GET'])
+def getTweets():
+	searchTerm = request.args.get('search')
+	tweets = fetchsamples(searchTerm)
+	return tweets
+	
+def twitterreq(url, method, parameters):
+  req = oauth.Request.from_consumer_and_token(oauth_consumer,
+                                             token=oauth_token,
+                                             http_method=http_method,
+                                             http_url=url, 
+                                             parameters=parameters)
+
+  req.sign_request(signature_method_hmac_sha1, oauth_consumer, oauth_token)
+
+  headers = req.to_header()
+
+  if http_method == "POST":
+    encoded_post_data = req.to_postdata()
+  else:
+    encoded_post_data = None
+    url = req.to_url()
+
+  opener = urllib.OpenerDirector()
+  opener.add_handler(http_handler)
+  opener.add_handler(https_handler)
+
+  response = opener.open(url, encoded_post_data)
+
+  return response
+
+def fetchsamples(searchTerm):
+  url = "https://api.twitter.com/1.1/search/tweets.json?q=%s&count=10" %(searchTerm,)
+  parameters = []
+  tweets = twitterreq(url, "GET", parameters)
+  
+  response = ""
+  for line in tweets:
+    response = response + line.strip()
+  
+  return response
     
 if __name__ == '__main__':    
     app.run(debug=True)
