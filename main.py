@@ -313,25 +313,31 @@ def getDBPediaInfos():
 	venueQuery = DBP_PREFIX + """SELECT ?abstract ?link ?location ?architect_name ?current_use
 							WHERE {
 							  ?sub dbpediaowl:name '"""+ venue +"""' @nl;
-								dbpedia-owl:architect ?architect;
 								dbpediaowl:abstract ?abstract;
-								dbpediaowl:wikiPageExternalLink ?link;
-								nldbpedia:locatie ?location;
-								dbpedia-owl:currentlyUsedFor ?current_use.
-							  ?architect nldbpedia:naam ?architect_name .
+								dbpediaowl:wikiPageExternalLink ?link.
+							  OPTIONAL {
+								?sub nldbpedia:locatie ?location.
+							  }
+							  OPTIONAL {
+								?sub dbpedia-owl:currentlyUsedFor ?current_use.
+							  }
+							  OPTIONAL {
+								?sub dbpedia-owl:architect ?architect.
+								?architect nldbpedia:naam ?architect_name .
+							  }
 							} LIMIT 1"""
 	sparql.setQuery(venueQuery)
 	sparql.setReturnFormat(JSON)
 	results = sparql.query().convert()
 	infos = results["results"]["bindings"]
 	if infos == []:
-		cityQuery = DBP_PREFIX + """SELECT ?abstract ?population ?link
+		cityQuery = DBP_PREFIX + """SELECT ?abstract ?link
 									WHERE {
-									  ?city rdf:type dbpedia-owl:Place; 
-										rdfs:label '"""+ city +"""' @nl;
-										dbpediaowl:abstract ?abstract;
-										dbpedia-owl:populationTotal ?population;
-										dbpediaowl:wikiPageExternalLink ?link.
+									  ?city rdf:type dbpedia-owl:Municipality; 
+										rdfs:label ?name;
+										dbpedia-owl:abstract ?abstract;
+										dbpedia-owl:wikiPageExternalLink ?link.
+										FILTER contains(?name, '"""+ city +"""').
 									} LIMIT 1"""
 		sparql.setQuery(cityQuery)
 		sparql.setReturnFormat(JSON)
@@ -350,7 +356,10 @@ def processVenueData(venueInfo):
 			location = venue["location"]["value"]
 		else:
 			location = ""
-		architect = venue["architect_name"]["value"]
+		if venue["architect_name"]["type"] == "literal" or venue["architect_name"]["type"] == "typed-literal":
+			architect = venue["architect_name"]["value"]
+		else:
+			architect = ""
 		current_use = venue["current_use"]["value"]
 			
 		record.append({
@@ -366,12 +375,10 @@ def processCityData(cityInfo):
 	record = []
 	for city in cityInfo:
 		abstract = city["abstract"]["value"]
-		population = city["population"]["value"]
 		link = city["link"]["value"]
 		record.append({
 			"abstract": abstract,
-			"link": link,
-			"population":population,
+			"link": link
 			})
 	return record
     
