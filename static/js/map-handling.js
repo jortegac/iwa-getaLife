@@ -4,6 +4,7 @@ var markers = [];
 var infowindow = new google.maps.InfoWindow({});
 var visible = false;
 var arrAddress = [];
+var abstract = "";
 
 var geocoder = new google.maps.Geocoder();
 
@@ -73,7 +74,6 @@ function processEvents(title, events){
 	//var div = $('<div class="list-group" text-align:justify"></div>');	
 	var div = document.createElement('div');
 	$( div ).attr("class", "list-group");
-	var parser = new DOMParser()
 	
 	$.each(events, function(i, event) {
 		$.each(event, function(i, item) {
@@ -127,7 +127,7 @@ function processVenues(venues) {
 	// Process each venue in the response
 	$.each(venues, function(i, item) {
 		
-		
+		var venueTitle = item.venue_title.value.trim();
 		console.log(item);
 		
 		if(!jQuery.isEmptyObject(item.venue_longitude) && !jQuery.isEmptyObject(item.venue_latitude) ){
@@ -139,9 +139,9 @@ function processVenues(venues) {
 			console.log(lat);	
 			
 			var events = "";
-			
+
 			if(!jQuery.isEmptyObject(item.events)){				
-				events = processEvents(item.venue_title.value.trim(), item.events);			
+				events = processEvents(venueTitle, item.events);	
 			}
 			
 			
@@ -150,7 +150,7 @@ function processVenues(venues) {
 			// Create the information to be displayed for each venue
 			var html = createHtml(item, point);
 			// Create the marker using the coordinates and the display information
-			createMarker(point, html, events);
+			createMarker(point, html, events, venueTitle);
 		}
 	});	
 	
@@ -215,31 +215,31 @@ function centerMap(marker) {
 }
 
 // Create marker
-function createMarker(point, html, events) {
+function createMarker(point, html, events, venueTitle) {
 	// Create marker using the coordinates in the point
 	var marker = new google.maps.Marker({
 		position: point
 	});
-	var h4 = html.find("h4");
-	marker.setTitle(h4.html());
+	
+	marker.setTitle(venueTitle);
 	
 	// Add display information to the marker's info window
 	google.maps.event.addListener(marker, "click", function() {
 		geocoder.geocode({'latLng': point}, function(results, status) {
 			var address = "No available address";
+			var city = "";
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log(results);
 				if (results[0]) {
 					address = results[0].formatted_address;
 					arrAddress= results[0].address_components;
-					var city = "";
 					for (i = 0; i < arrAddress.length; i++) { 
 						if (arrAddress[i].types[0] == "locality") { 
 							city = arrAddress[i].long_name ;
 						}
 					}
-					getDBPediaInfos(marker.getTitle(), city);
 				}
+				
 				
 				var addressHtml = $('<p><strong>Address:</strong></p>');
 				var a = $('<p></p>');
@@ -251,53 +251,95 @@ function createMarker(point, html, events) {
 				baseHtml = html[0].outerHTML.replace("</div>", "");
 				
 				console.log(events);
-				
-				venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>"			
-			
+					
+				venueHtml = baseHtml + addressHtml[0].outerHTML + "</div>";			
+		
 				var tabs = "<div class='ionTabs' id='tabs_1' data-name='Tabs_Group_name'>" +
-								"<ul class='ionTabs__head'>" +
-									"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
-									"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
-								"</ul>" +
-								"<div class='ionTabs__body'>" +
-									"<div class='ionTabs__item' data-name='Venue'>" +
-										venueHtml +
-									"</div>" +
-									"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
-										events.outerHTML +
-									"</div>" +
-									"<div class='ionTabs__preloader'></div>" +
+							"<ul class='ionTabs__head'>" +
+								"<li class='ionTabs__tab' data-target='Venue'>Venue</li>" +
+								"<li  class='ionTabs__tab' data-target='Events'>Events</li>" +
+								"<li  class='ionTabs__tab' data-target='DBPedia'>More information</li>" +
+								"<li  class='ionTabs__tab' data-target='Twitter'>Twitter</li>" +
+							"</ul>" +
+							"<div class='ionTabs__body'>" +
+								"<div class='ionTabs__item' data-name='Venue'>" +
+									venueHtml +
 								"</div>" +
-							"</div>" ;
-						
+								"<div id='eventsTab' class='ionTabs__item' data-name='Events'>" +
+									events.outerHTML +
+								"</div>" +
+								"<div id='dbpediaTab' class='ionTabs__item' data-name='DBPedia'><div id='dbpedia-info'><span>Waiting for data...</span></div></div>" +
+								"<div id='twitterTab' class='ionTabs__item' data-name='Twitter'><div id='tweets' class='list-group'><span>Waiting for data...</span><div id='tweets-modal'></div></div></div>" +
+								"<div class='ionTabs__preloader'></div>" +
+							"</div>" +
+						"</div>" ;
+					
+				google.maps.event.clearListeners(infowindow, 'domready');
+				
 				google.maps.event.addListener(infowindow, 'domready', function (e) {
-					$.ionTabs("#tabs_1");
+					$.ionTabs("#tabs_1", {type: "none"});
+					dbpediaSearch(venueTitle, city);
+					twitterSearch(venueTitle, marker.getPosition());
 					
 				});
-				
-				//infowindow.setContent(baseHtml + p[0].outerHTML + "</div>"); 
+			
 				infowindow.setContent(tabs); 
 				infowindow.open(map,marker);
+				
 			}
 		});
-		//Fill in the side panel with infos realtive to the events
-		if(events != "") {
-			if(visible){
-				var myNode = document.getElementById("panelText");
-				while (myNode.firstChild) {
-					myNode.removeChild(myNode.firstChild);
-				}
-			} else {
-				visible = $(".panel").toggle("fast").is(":visible");
-			}
-			var content = $.parseHTML(events.outerHTML);
-			$('#panelText').append(content);
-		}
 	});
 	
 	// Put marker in the global markers structure
 	markers.push(marker);
 }
 
-
+function createDBPediaHTML(name, info){
+	var div = document.createElement('div');
+	$( div ).attr("class", "list-group");
+	$( div ).attr("id", "dbpediaInfo");
+	
+	var heading = document.createElement('h4');
+	$( heading ).attr("class", "list-group-heading");
+	var text=document.createTextNode(name);
+	heading.appendChild(text);
+	div.appendChild(heading);
+	
+	var abstract = document.createElement('p');
+	text=document.createTextNode(info.abstract);
+	abstract.appendChild(text);
+	div.appendChild(abstract);
+	
+	var par = document.createElement('p');
+	var link = document.createElement('a');
+	$(link).attr("href", info.link);
+	$(link).attr("target", "_blank");
+	text=document.createTextNode("Visit Website");
+	link.appendChild(text);
+	par.appendChild(link);
+	div.appendChild(par);
+	
+	if(!$.isEmptyObject(info.location) && !(info.location == "")){
+		var location = document.createElement('p');
+		text = document.createTextNode("Location: " + info.location);
+		location.appendChild(text);
+		div.appendChild(location);		
+	}
+	
+	if(!$.isEmptyObject(info.architect) && !(info.architect == "")){
+		var architect = document.createElement('p');
+		text = document.createTextNode("Architect: " + info.architect);
+		architect.appendChild(text);
+		div.appendChild(architect);		
+	}
+	
+	if(!$.isEmptyObject(info.current_use)){
+		var use = document.createElement('p');
+		text = document.createTextNode("Currently used as: " + info.current_use);
+		use.appendChild(text);
+		div.appendChild(use);		
+	}
+	
+	return div;
+}
 

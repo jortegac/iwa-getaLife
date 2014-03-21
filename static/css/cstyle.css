@@ -90,25 +90,6 @@
 	left:50%;  
 }
 
-.list-group h4{
-	font-size: 15px;
-	text-decoration: underline;
-}
-
-.line-separator{
-	height:1px;
-	background:#FFFFFF;
-	border-bottom:1px solid #01313E;
-	margin: 3px;
-}
-
-#dbpediaInfo{
-	font-size: 13px;
-	margin-top: 3px;
-	height: 35%;
-	overflow-y: auto;
-}
-
 #map-canvas{
 	margin-bottom:-64px;
 }

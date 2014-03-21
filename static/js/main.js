@@ -351,10 +351,3 @@ function geolocationSuccess(position){
 		}
 	});
 }
-
-function getDBPediaInfos(title, city){
-	$.getJSON('/dbpedia').done(function(json) {
-
-	});
-	
-}
