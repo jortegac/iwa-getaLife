@@ -36,10 +36,10 @@ PREFIX = """PREFIX dc:<http://purl.org/dc/terms/>
 			PREFIX ah:<http://purl.org/artsholland/1.0/>"""
 			
 # Twitter credentials
-access_token_key = "35304484-ikVK472PYKZ5Twa7KakHZmstc0w8UTgfOBIVqpYDT"
-access_token_secret = "FZKwNbX6FmF5OwA20c9nvtFDmAvxBOO5XqxEFGbqxLk"
-consumer_key = "qRRxU8I0nhSLJ5CDWe72ZQ"
-consumer_secret = "HKDrhksRzMWkl1cKlCnx9XBa79I21pWd57ZGoPNcsXI"
+access_token_key = "<access_token_key>"
+access_token_secret = "<access_token_secret>"
+consumer_key = "<consumer_key>"
+consumer_secret = "<consumer_secret>"
 _debug = 0
 oauth_token    = oauth.Token(key=access_token_key, secret=access_token_secret)
 oauth_consumer = oauth.Consumer(key=consumer_key, secret=consumer_secret)
