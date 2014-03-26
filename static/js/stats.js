@@ -22,10 +22,13 @@ function enableStatsPanel(json) {
     var aggregates_by_genre = aggregatesByGenre(aggregates_by_type);
     var genres = Object.keys(aggregates_by_genre);
     var entries = stackableEntries(aggregates_by_genre,types);
-    console.log("entries",entries);
-    var friendlyTypes = genFriendlyTypes(types);
-    var friendlyGenres = genFriendlyGenres(genres);
-    initStats(entries,friendlyTypes,friendlyGenres);
+	
+	if (entries.length != 0){
+		console.log("entries",entries);
+		var friendlyTypes = genFriendlyTypes(types);
+		var friendlyGenres = genFriendlyGenres(genres);
+		initStats(entries,friendlyTypes,friendlyGenres);
+	}
 }
 
 function genFriendlyGenres(types) {
